@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<com.balysv.materialripple.MaterialRippleLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:mrl_rippleColor="#585858"
+    app:mrl_rippleAlpha="0.2"
+    app:mrl_rippleDuration="0"
+    app:mrl_rippleOverlay="true"  >
+
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/flat_list_selector"
+        android:clickable="true"
+        android:focusable="true"
+        android:descendantFocusability="blocksDescendants"
+        android:orientation="vertical"
+        android:padding="10dp"
+    >
+
+
+        <TextView
+            android:id="@+id/txt"
+            android:paddingLeft="5sp"
+            android:paddingRight="5sp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="24sp"
+            android:textColor="@android:color/black"
+        />
+
+        <TextView
+            android:id="@+id/desc"
+            android:paddingLeft="20sp"
+            android:paddingRight="20sp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:textColor="@android:color/black"
+        />
+    </LinearLayout>
+
+</com.balysv.materialripple.MaterialRippleLayout>

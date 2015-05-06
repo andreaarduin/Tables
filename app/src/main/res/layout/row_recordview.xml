@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:background="@drawable/flat_list_background"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+       <TextView
+           android:id="@+id/columnLabel"
+           android:layout_width="wrap_content"
+           android:layout_height="match_parent"
+           android:layout_marginRight="@dimen/activity_horizontal_margin"/>
+       <EditText
+           android:id="@+id/columnValue"
+           android:inputType="textMultiLine"
+           android:layout_width="0dp"
+           android:layout_weight="1"
+           android:layout_height="match_parent"
+           android:scrollbars="vertical"
+           android:focusable="true"/>
+       </LinearLayout>

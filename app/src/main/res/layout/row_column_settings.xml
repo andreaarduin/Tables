@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/card_selector"
+    android:layout_marginTop="@dimen/activity_vertical_margin"
+    android:layout_marginRight="@dimen/activity_horizontal_margin"
+    android:layout_marginLeft="@dimen/activity_horizontal_margin"
+    android:paddingBottom="@dimen/activity_horizontal_margin"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <Spinner
+            android:id="@+id/type"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:spinnerMode="dropdown"
+            android:background="@drawable/spinner_background"
+            android:drawSelectorOnTop="true"
+            />
+        <EditText
+        android:id="@+id/name"
+        android:inputType="text"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        />
+
+    </LinearLayout>
+
+       <LinearLayout
+           android:orientation="horizontal"
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           >
+
+               <TextView
+                   android:layout_weight="1"
+                   android:layout_height="wrap_content"
+                   android:layout_width="0dp"
+                   android:gravity="center"
+                   android:text="@string/notnull"/>
+               <TextView
+                   android:layout_weight="1"
+                   android:layout_height="wrap_content"
+                   android:layout_width="0dp"
+                   android:gravity="center"
+                   android:text="@string/AI"/>
+               <TextView
+                   android:layout_weight="1"
+                   android:layout_height="wrap_content"
+                   android:layout_width="0dp"
+                   android:gravity="center"
+                   android:text="@string/PK"/>
+               <TextView
+                   android:layout_weight="1"
+                   android:layout_height="wrap_content"
+                   android:layout_width="0dp"
+                   android:gravity="center"
+                   android:text="@string/unique"/>
+       </LinearLayout>
+    <LinearLayout
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:orientation="horizontal">
+        <Switch
+            android:id="@+id/notnull"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent" />
+        <Switch
+            android:id="@+id/autoinc"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent" />
+        <Switch
+            android:id="@+id/primarykey"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent" />
+        <Switch
+            android:id="@+id/unique"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent" />
+    </LinearLayout>
+    </LinearLayout>
+
+

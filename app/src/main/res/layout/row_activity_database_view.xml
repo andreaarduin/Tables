@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<com.balysv.materialripple.MaterialRippleLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:mrl_rippleColor="#585858"
+    app:mrl_rippleAlpha="0.2"
+    app:mrl_rippleDuration="0"
+    app:mrl_rippleOverlay="true"  >
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/flat_list_selector"
+        android:clickable="true"
+        android:focusable="true"
+        android:descendantFocusability="blocksDescendants"
+        >
+
+
+    <TextView
+        android:id="@+id/txtName"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="24sp"/>
+    <TextView
+        android:id="@+id/txtFields"
+        android:paddingLeft="@dimen/bigger_padding"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="12sp"/>
+
+
+</LinearLayout>
+</com.balysv.materialripple.MaterialRippleLayout>
