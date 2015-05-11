@@ -3,6 +3,7 @@ package it.arduin.tables;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 import java.util.ArrayList;
 
@@ -24,24 +25,29 @@ public class SharedPreferencesOperations {
         editor.putString("name"+size, fileName);
         int max=prefs.getInt("size", size);
         editor.putInt("size",max+1);
+        Log.wtf("size up", "" + (max - 1));
         editor.apply();
     }
     public int getSize(int def){
         return prefs.getInt("size", def);
     }
     public void setSize(int size){
-
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putInt("size",size);
     }
     public void forgetDatabase(int position,int size){
         SharedPreferences.Editor editor = prefs.edit();
         editor.remove("path"+position);
-        editor.remove("name"+position);
+        editor.remove("name" + position);
         int max=getSize(size);
         editor.putInt("size",max-1);
+        Log.wtf("size up", "" + (max - 1));
         editor.apply();
     }
-    public void loadList(ArrayList<DatabaseHolder> list) throws Exception{
+    public ArrayList<DatabaseHolder> loadList() throws Exception{
         int size=getSize(0);
+        Log.wtf("sizei",size+"");
+        ArrayList<DatabaseHolder> list=new ArrayList<>();
         for(int i=0;i<size;i++){
             String name="n",path="p";
             try{ name=prefs.getString("name"+i,"err");
@@ -50,9 +56,14 @@ public class SharedPreferencesOperations {
             catch(Exception e){
                 throw e;
             }
-            list.add(new DatabaseHolder(name,path));
+            list.add(new DatabaseHolder(name, path));
         }
+        Log.wtf("sizef",list.size()+"");
+        return list;
     }
+
+
+    ////
     public void setQueryLimit(int limit){
         SharedPreferences.Editor editor = prefs.edit();
         editor.putInt("query_limit",limit);

@@ -17,6 +17,7 @@
     <string name="title_activity_record_add">RecordAddActivity</string>
     <string name="title_activity_table_edit">tableEditActivity</string>
     <string name="action_confirm">OK</string>
+    <string name="action_delete_file">OK</string>
     <string name="notnull">NotNull</string>
     <string name="PK">PrimaryKey</string>
     <string name="AI">AutoInc</string>
@@ -44,7 +45,7 @@
     <string name="DatabaseViewActivity_delete_table">Delete table</string>
     <string name="DatabaseViewActivity_view_pragma">View table structure</string>
     <string name="DatabaseViewActivity_rename_table">Rename table</string>
-    <string name="DatabaseViewActivity_delete_table_message">Vuoi cancellare la tabella</string>
+    <string name="DatabaseViewActivity_delete_table_message">Are you sure you want to delete the table </string>
     <string name="DatabaseViewActivity_sqlite_master">sqlite_master</string>
     <string name="yes">Yes</string>
     <string name="DatabaseViewActivity_rename_table_message">Insert the new name</string>
@@ -62,4 +63,12 @@
     <string name="RecordAddActivity_error_message">Can\'t add record, please try again</string>
     <string name="QuerySelectViewActivity_query_error_message">Query error</string>
     <string name="QuerySelectViewActivity_db_error_message">Cannot open database</string>
+    <string name="title_activity_database_view_info">DatabaseViewInfoActivity</string>
+    <string name="DatabaseViewActivity_error_opening_db">Cannot open database</string>
+    <string name="DatabaseViewInfoActivity_filepath">File path</string>
+    <string name="DatabaseViewInfoActivity_filesize">File size</string>
+    <string name="DatabaseViewInfoActivity_tables">Tables</string>
+    <string name="DatabaseViewInfoActivity_indexes">Indexes</string>
+    <string name="DatabaseViewInfoActivity_hashcode">Hashcode</string>
+    <string name="DatabaseViewInfoActivity_lastedit">Last edit</string>
 </resources>

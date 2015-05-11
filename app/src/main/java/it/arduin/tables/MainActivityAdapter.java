@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -18,27 +19,41 @@ public class MainActivityAdapter extends RecyclerView.Adapter<MainActivityAdapte
     private List<DatabaseHolder> data;
     private int rowLayout;
     private MainActivity instance;
+    private Context c;
 
     public MainActivityAdapter(List<DatabaseHolder> d, int rowLayout, MainActivity a) {
         this.data = d;
         this.rowLayout = rowLayout;
         this.instance=a;
+        c=a;
     }
-
-    @Override
-    public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
-        View v = LayoutInflater.from(viewGroup.getContext()).inflate(rowLayout, viewGroup, false);
-
-        return new ViewHolder(v);
+    public DatabaseHolder getItemAt(int i){
+        return data.get(i);
     }
-
     public void insert(DatabaseHolder d){
+        new SharedPreferencesOperations(c).addAndSaveDatabase(d.getPath(),d.getName(), data.size());
         data.add(d);
         notifyItemInserted(data.size());
     }
+    public void add(DatabaseHolder d){
+        data.add(d);
+        notifyItemInserted(data.size());
+    }
+    @Override
+    public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
+        View v = LayoutInflater.from(viewGroup.getContext()).inflate(rowLayout, viewGroup, false);
+        return new ViewHolder(v);
+    }
+
     public void remove(int position){
+        new SharedPreferencesOperations(c).forgetDatabase(position, data.size());
         data.remove(position);
         notifyItemRemoved(position);
+    }
+    public void flush(){
+        data=new ArrayList<>();
+        new SharedPreferencesOperations(c).deleteAll();
+        notifyDataSetChanged();
     }
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, int i) {

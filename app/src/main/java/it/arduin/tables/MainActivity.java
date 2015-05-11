@@ -11,9 +11,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -24,25 +22,28 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import com.melnykov.fab.FloatingActionButton;
-
 import java.util.ArrayList;
 
-import butterknife.ButterKnife;
 import butterknife.InjectView;
 import jp.wasabeef.recyclerview.animators.FadeInLeftAnimator;
+import rx.Observable;
+import rx.Subscriber;
+import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 
 public class MainActivity extends BaseProjectActivity {
     private ArrayList<DatabaseHolder> list;
     private SharedPreferencesOperations prefs;
     private MainActivityAdapter myAdapter;
-    private static final int ACTIVITY_CHOOSE_FILE = 3;
+    private ProgressDialog progressDialog;
+    static final int ACTIVITY_CHOOSE_FILE = 3;
     static final int NEW_DB_PATH=0;
     static final int NEW_DB_CREATE=1;
     static final int NEW_DB_CHOOSE=2;
     Context c;
-     Toolbar toolbar;
+    Toolbar toolbar;
     @InjectView(R.id.list)
     android.support.v7.widget.RecyclerView mRecyclerView;
     @InjectView(R.id.fab)
@@ -57,7 +58,8 @@ public class MainActivity extends BaseProjectActivity {
         toolbar = ToolbarUtils.getSettedToolbar(this,R.id.toolbar);
         list= new ArrayList<>();
         initList();
-        new loadDBSTask(this).execute();
+        //new loadDBSTask(this).execute();
+        loadDBs();
     }
 
     private class loadDBSTask extends AsyncTask<Object,Object,Object>
@@ -83,7 +85,7 @@ public class MainActivity extends BaseProjectActivity {
         @Override
         protected Object doInBackground(Object... params) {
             try{
-                prefs.loadList(list);
+                list = prefs.loadList();
                 progressPopup.setMax(list.size());
                 publishProgress();
 
@@ -127,18 +129,18 @@ public class MainActivity extends BaseProjectActivity {
                     @Override
                     public void onItemClick(View view, int position) {
                         Intent intent = new Intent(c, DatabaseViewActivity.class);
-                        intent.putExtra("db", list.get(position));
+                        intent.putExtra("db", myAdapter.getItemAt(position));
                         startActivity(intent);
                     }
                 })
         );
 
 
-        //for(int i=0;i<12;i++) list.add(new DatabaseHolder("DB "+i,null,"percorso:/."));
-        //list.add(0,new DatabaseHolder("test",null,"/storage/emulated/0/dbTest.sqlite"));
+        //for(int i=0;i<12;i++) list.insert(new DatabaseHolder("DB "+i,null,"percorso:/."));
+        //list.insert(0,new DatabaseHolder("test",null,"/storage/emulated/0/dbTest.sqlite"));
         myAdapter = new MainActivityAdapter(list, R.layout.row_mainactivity, this);
         mRecyclerView.setAdapter(myAdapter);
-        fab.attachToRecyclerView(mRecyclerView);
+        //fab.attachToRecyclerView(mRecyclerView);
         c=this;
         fab.setOnClickListener(new OnClickListener() {
             @Override
@@ -196,9 +198,9 @@ public class MainActivity extends BaseProjectActivity {
         alert.setPositiveButton(c.getString(R.string.ok), new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 String value = input.getText().toString();
-                int barra=value.lastIndexOf("/");
-                int punto=value.lastIndexOf(".");
-                if(punto==-1) punto=value.length();
+                int barra = value.lastIndexOf("/");
+                int punto = value.lastIndexOf(".");
+                if (punto == -1) punto = value.length();
                 String fileName = value.substring(1 + barra, punto);
                 saveDatabase(value, fileName);
             }
@@ -254,7 +256,7 @@ public class MainActivity extends BaseProjectActivity {
         Intent chooseFile;
         Intent intent;
         chooseFile = new Intent(Intent.ACTION_GET_CONTENT);
-        chooseFile.setType("*/*");
+        chooseFile.setType("application/octet-stream");
         intent = Intent.createChooser(chooseFile, c.getString(R.string.mainActivity_file_chooser_title));
         startActivityForResult(intent, ACTIVITY_CHOOSE_FILE);
     }
@@ -262,13 +264,10 @@ public class MainActivity extends BaseProjectActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        String filePath="";
-        SQLiteDatabase db=null;
+        String filePath;
         if (resultCode != RESULT_OK) return;
-        String path     = "";
-        if(requestCode == ACTIVITY_CHOOSE_FILE) {
+        if(requestCode == ACTIVITY_CHOOSE_FILE) {///If the request was the file chooser, we check the path for a valid db and save it
             Uri uri = data.getData();
-            //filePath = getRealPathFromURI(uri);
             filePath = DBUtils.getPath(c, uri);
             if (filePath == null) filePath = uri.getPath();
             try{
@@ -290,13 +289,12 @@ public class MainActivity extends BaseProjectActivity {
 
     public void forgetAndSaveDatabase(final int position){
         final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(c);
-        alertDialogBuilder.setMessage(c.getString(R.string.mainActivity_forget_database)+list.get(position).getName()+" ?");
+        alertDialogBuilder.setMessage(c.getString(R.string.mainActivity_forget_database) + myAdapter.getItemAt(position).getName() + " ?");
         alertDialogBuilder.setTitle(c.getString(R.string.action_confirm));
         alertDialogBuilder.setPositiveButton(c.getString(R.string.ok),
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface arg0, int arg1) {
-                        prefs.forgetDatabase(position, list.size());
                         myAdapter.remove(position);
                     }
                 });
@@ -312,7 +310,7 @@ public class MainActivity extends BaseProjectActivity {
 
     }
     public void addAndSaveDatabase(String filePath,String fileName){
-        prefs.addAndSaveDatabase(filePath, fileName, list.size());
+
         myAdapter.insert(new DatabaseHolder(fileName, filePath));
     }
 
@@ -325,9 +323,7 @@ public class MainActivity extends BaseProjectActivity {
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface arg0, int arg1) {
-                        prefs.deleteAll();
-                        list=new ArrayList<>();
-                        myAdapter.notifyDataSetChanged();
+                        myAdapter.flush();
                     }
                 });
         alertDialogBuilder.setNegativeButton(c.getString(R.string.no),
@@ -381,5 +377,68 @@ public class MainActivity extends BaseProjectActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+    private Observable<DatabaseHolder> getTableObservable(){
+        return Observable.create(new Observable.OnSubscribe<DatabaseHolder>() {
+            @Override
+            public void call(Subscriber<? super DatabaseHolder> sub) {
+                try {
+                    list = prefs.loadList();
+                } catch (Exception e) {
+                    sub.onError(e);
+                }
+                for (int i = 0; i < list.size(); i++) sub.onNext(list.get(i));
+                progressDialog.setMax(list.size());
+                Log.wtf("size", "" + list.size());
+                sub.onCompleted();
+            }
+        });
+    }
+
+    private Subscriber<DatabaseHolder> getTableSubscriber(){
+        return new Subscriber<DatabaseHolder>() {
+            int done=0;
+            @Override
+            public void onStart(){
+                request(1);
+                progressDialog = new ProgressDialog(getContext());
+                progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+                progressDialog.setIndeterminate(false);
+                progressDialog.setCancelable(false);
+                progressDialog.setMessage(getString(R.string.QuerySelectViewActivity_loading_message));//cambia stringa mouna
+                progressDialog.show();
+            }
+            @Override
+            public void onCompleted() {
+                progressDialog.cancel();
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                Log.wtf("error",e.getLocalizedMessage());
+            }
+
+            @Override
+            public void onNext(DatabaseHolder d) {
+                done++;
+                progressDialog.setProgress(done);
+                try{
+                    myAdapter.add(d);
+                }
+                catch(Exception e){
+                    //Log.d("errore" ,param[0].toString());
+                }
+                request(1);
+            }
+        };
+    }
+
+    private void loadDBs(){
+        Observable<DatabaseHolder> myObservable=getTableObservable();
+        Subscriber<DatabaseHolder> mySubscriber=getTableSubscriber();
+        Subscription mySubscription = myObservable.onBackpressureBuffer()
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(mySubscriber);
     }
 }

@@ -10,6 +10,7 @@ import android.content.res.Configuration;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -50,7 +51,6 @@ public class DatabaseViewActivity extends BaseProjectActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_databaseview);
         c=this;
-        if(mRecyclerView==null) Log.wtf("w","Tf");
         if(savedInstanceState!=null){
             dbh=savedInstanceState.getParcelable("db");
             path=dbh.getPath();
@@ -142,10 +142,8 @@ public class DatabaseViewActivity extends BaseProjectActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_sqlite_master) {
-            Intent intent=new Intent(c,QuerySelectViewActivity.class);
-            intent.putExtra("query","select * from sqlite_master");
-            intent.putExtra("table","sqlite_master");
-            intent.putExtra("customQuery",true);
+            Intent intent=new Intent(c,DatabaseViewInfoActivity.class);
+            intent.putExtra("db",dbh);
             intent.putExtra("path",path);
             startActivity(intent);
         }
@@ -173,7 +171,7 @@ public class DatabaseViewActivity extends BaseProjectActivity {
                 .setPositiveButton(getString(R.string.yes),new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog,int id) {
                         mAdapter.list=new ArrayList<TableHolder>();
-                        new LoadTablesList(c).execute();
+                        loadTables();
                     }
                 })
                 .setNegativeButton(getString(R.string.no), new DialogInterface.OnClickListener() {
@@ -272,7 +270,7 @@ public class DatabaseViewActivity extends BaseProjectActivity {
                     db=SQLiteDatabase.openDatabase(path, null, SQLiteDatabase.CREATE_IF_NECESSARY);
                     db.execSQL("ALTER TABLE '"+name+"' RENAME TO '"+input+"'");
                     TableHolder t=mAdapter.list.get(position);
-                    t=new TableHolder(input,t.getFields());
+                    t=new TableHolder(input,t.getFields(),dbh);
                     mAdapter.list.set(position,t);
                     mAdapter.notifyDataSetChanged();
 
@@ -334,12 +332,12 @@ public class DatabaseViewActivity extends BaseProjectActivity {
         protected Object doInBackground(Object... params) {
             done = 0;
             ArrayList<String> tables;
-            tables = dbh.getTables(context);
+            tables = dbh.getTables();
             //Log.d("dim",""+tables.size());
             tableNumber = tables.size();
             progressPopup.setMax(tableNumber);
             for (int i = 0; i < tables.size(); i++) {
-                publishProgress(new TableHolder(tables.get(i), ColumnPair.getStringDefinitionArray(DBUtils.getColumns(path, tables.get(i)))));
+                publishProgress(new TableHolder(tables.get(i), ColumnPair.getStringDefinitionArray(DBUtils.getColumns(path, tables.get(i))),dbh));
 
                 /*try {
                     Thread.sleep(300);
@@ -390,9 +388,10 @@ public class DatabaseViewActivity extends BaseProjectActivity {
         return Observable.create(new Observable.OnSubscribe<TableHolder>() {
             @Override
             public void call(Subscriber<? super TableHolder> sub) {
-                if(!dbh.isAccessible()) sub.onError(new Exception("db non apribile"));
-                final ArrayList<String> tables = dbh.getTables(getContext());
+                if(!dbh.isAccessible()) sub.onError(new Exception(getString(R.string.DatabaseViewActivity_error_opening_db)));
+                final ArrayList<String> tables = dbh.getTables();
                 //tableNumber = tables.size();
+                if(dbh.getTables().size()<=0) sub.onCompleted();
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -400,7 +399,7 @@ public class DatabaseViewActivity extends BaseProjectActivity {
                     }
                 });
                 for (int i = 0; i < tables.size(); i++) {
-                    sub.onNext(new TableHolder(tables.get(i), ColumnPair.getStringDefinitionArray(DBUtils.getColumns(path, tables.get(i)))));
+                    sub.onNext(new TableHolder(tables.get(i), ColumnPair.getStringDefinitionArray(DBUtils.getColumns(path, tables.get(i))),dbh));
                 }
                 sub.onCompleted();
             }
@@ -438,7 +437,7 @@ public class DatabaseViewActivity extends BaseProjectActivity {
                 done++;
                 //progressPopup.setProgress(done);
                 try{
-                    mAdapter.list.add(tableHolder);
+                    mAdapter.add(tableHolder);
                 }
                 catch(Exception e){
                     //Log.d("errore" ,param[0].toString());

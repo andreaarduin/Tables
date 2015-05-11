@@ -34,7 +34,6 @@
     <string name="error">Errore</string>
     <string name="QuerySelectViewActivity_delete_message">Sei sicuro di voler cancellare il record?</string>
     <string name="DatabaseViewActivity_refresh_message">Le tabelle potrebbero essere cambiate. Vuoi ricaricarle?</string>
-    <string name="DatabaseViewActivity_rename_table_messagge">Inserisci il nuovo nome</string>
     <string name="QuerySelectViewActivity_error_delete_record_message">Impossibile cancellare il record</string>
     <string name="QuerySelectViewActivity_insert_query_message">Inserisci la query</string>
     <string name="QuerySelectViewActivity_loading_message">Sto caricando, attendi...</string>
@@ -45,4 +44,13 @@
     <string name="RecordViewActivity_update_error_message">Errore nel  salvataggio delle modifiche, riprova</string>
     <string name="QuerySelectViewActivity_query_error_message">Errore nella query</string>
     <string name="QuerySelectViewActivity_db_error_message">Impossibile aprire il database</string>
+    <string name="DatabaseViewActivity_delete_table_message">Vuoi cancellare la tabella</string>
+    <string name="DatabaseViewActivity_error_opening_db">Non riesco ad aprire il database</string>
+    <string name="DatabaseViewActivity_rename_table_message">Inserisci il nuovo nome</string>
+    <string name="DatabaseViewInfoActivity_filepath">Percorso</string>
+    <string name="DatabaseViewInfoActivity_filesize">Dimensione</string>
+    <string name="DatabaseViewInfoActivity_hashcode">Codice hash</string>
+    <string name="DatabaseViewInfoActivity_indexes">Indici</string>
+    <string name="DatabaseViewInfoActivity_lastedit">Ultima modifica</string>
+    <string name="DatabaseViewInfoActivity_tables">Tabelle</string>
 </resources>

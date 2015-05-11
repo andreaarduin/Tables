@@ -11,14 +11,17 @@ import java.util.Arrays;
 public class TableHolder {
     public String name;
     public ArrayList<String> fields;
+    public DatabaseHolder parent;
 
-    public TableHolder(String name, ArrayList<String> fields) {
+    public TableHolder(String name, ArrayList<String> fields,DatabaseHolder parent) {
         this.name = name;
         this.fields = fields;
+        this.parent=parent;
     }
-    public TableHolder(String name, String[] fields) {
+    public TableHolder(String name, String[] fields,DatabaseHolder parent) {
         this.name = name;
         this.fields = new ArrayList<>(Arrays.asList(fields));
+        this.parent=parent;
     }
 
 
@@ -45,9 +48,6 @@ public class TableHolder {
         return fields;
     }
 
-    public void setFields(ArrayList<String> fields) {
-        this.fields = fields;
-    }
 
     @Override
     public String toString() {

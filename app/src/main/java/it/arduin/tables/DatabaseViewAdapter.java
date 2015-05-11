@@ -39,6 +39,12 @@ public class DatabaseViewAdapter extends RecyclerView.Adapter<DatabaseViewAdapte
         list.remove(position);
         notifyItemRemoved(position);
     }
+
+    public void add(TableHolder d){
+        list.add(d);
+        notifyItemInserted(list.size());
+    }
+
     public DatabaseViewAdapter getThis(){
         return this;
     }

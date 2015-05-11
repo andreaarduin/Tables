@@ -51,7 +51,6 @@
         </activity>
         <activity
             android:name=".CustomRecordViewActivity"
-
             android:parentActivityName=".QuerySelectViewActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -81,6 +80,14 @@
         <activity
             android:name=".TempPreferenceActivity"
             android:label="@string/title_activity_temp_preference" >
+        </activity>
+        <activity
+            android:name=".DatabaseViewInfoActivity"
+            android:label="@string/title_activity_database_view_info"
+            android:parentActivityName=".DatabaseViewActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="it.arduin.tables.DatabaseViewActivity" />
         </activity>
     </application>
 
