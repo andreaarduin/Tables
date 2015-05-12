@@ -7,8 +7,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
-import android.database.sqlite.SQLiteDatabase;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -34,9 +32,10 @@ import rx.schedulers.Schedulers;
 
 
 public class MainActivity extends BaseProjectActivity {
+    MainPresenter mPresenter;
     private ArrayList<DatabaseHolder> list;
     private SharedPreferencesOperations prefs;
-    private MainActivityAdapter myAdapter;
+    protected MainActivityAdapter myAdapter;
     private ProgressDialog progressDialog;
     static final int ACTIVITY_CHOOSE_FILE = 3;
     static final int NEW_DB_PATH=0;
@@ -53,6 +52,7 @@ public class MainActivity extends BaseProjectActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         c=this;
+        mPresenter=new MainPresenter(this);
         prefs = new SharedPreferencesOperations(c);
         //---------------toolbar
         toolbar = ToolbarUtils.getSettedToolbar(this,R.id.toolbar);
@@ -62,63 +62,6 @@ public class MainActivity extends BaseProjectActivity {
         loadDBs();
     }
 
-    private class loadDBSTask extends AsyncTask<Object,Object,Object>
-    {
-        int done;
-        ProgressDialog progressPopup;
-        Context context;
-
-        private loadDBSTask(Context context) {
-            this.context = context;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            lockScreenOrientation();
-            done=0;
-            progressPopup=new ProgressDialog(context);
-            progressPopup.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-            progressPopup.setIndeterminate(false);
-            progressPopup.setCancelable(false);
-            progressPopup.show();
-        }
-        @Override
-        protected Object doInBackground(Object... params) {
-            try{
-                list = prefs.loadList();
-                progressPopup.setMax(list.size());
-                publishProgress();
-
-            }
-            catch(Exception e){
-             //Toast.makeText(c,e.getLocalizedMessage(),Toast.LENGTH_LONG).show();
-            }
-            return null;
-        }
-        @Override
-        protected void onPostExecute(Object param) {
-            progressPopup.dismiss();
-            unlockScreenOrientation();
-        }
-        @Override
-        protected void onProgressUpdate(Object... param){
-            done++;
-            progressPopup.setProgress(done);
-            myAdapter.notifyDataSetChanged();
-        }
-        private void lockScreenOrientation() {
-            int currentOrientation = getResources().getConfiguration().orientation;
-            if (currentOrientation == Configuration.ORIENTATION_PORTRAIT) {
-                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-            } else {
-                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-            }
-        }
-
-        private void unlockScreenOrientation() {
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
-        }
-    }
     private void initList(){
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.setItemAnimator(new FadeInLeftAnimator());
@@ -128,16 +71,11 @@ public class MainActivity extends BaseProjectActivity {
                 new RecyclerItemClickListener(c, new RecyclerItemClickListener.OnItemClickListener() {
                     @Override
                     public void onItemClick(View view, int position) {
-                        Intent intent = new Intent(c, DatabaseViewActivity.class);
-                        intent.putExtra("db", myAdapter.getItemAt(position));
-                        startActivity(intent);
+                        mPresenter.startDatabaseView(myAdapter.getItemAt(position));
                     }
                 })
         );
 
-
-        //for(int i=0;i<12;i++) list.insert(new DatabaseHolder("DB "+i,null,"percorso:/."));
-        //list.insert(0,new DatabaseHolder("test",null,"/storage/emulated/0/dbTest.sqlite"));
         myAdapter = new MainActivityAdapter(list, R.layout.row_mainactivity, this);
         mRecyclerView.setAdapter(myAdapter);
         //fab.attachToRecyclerView(mRecyclerView);
@@ -145,7 +83,7 @@ public class MainActivity extends BaseProjectActivity {
         fab.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View arg0) {
-                showNewDatabasePopup();
+                mPresenter.onFABClick();
             }
         });
 
@@ -157,13 +95,13 @@ public class MainActivity extends BaseProjectActivity {
             public void onClick(DialogInterface dialog, int which) {
                 switch (which) {
                     case NEW_DB_PATH:
-                        addDatabaseFromPath();
+                        mPresenter.newDatabaseFromPathAction();
                         break;
                     case NEW_DB_CHOOSE:
-                        showFileChooser();
+                        mPresenter.newDatabaseFromFileChooserAction();
                         break;
                     case NEW_DB_CREATE:
-                        createNewDatabase();
+                        mPresenter.createNewDatabaseAction();
                         break;
 
                 }
@@ -179,16 +117,9 @@ public class MainActivity extends BaseProjectActivity {
         optionsDialog=alertDialogBuilder.create();
         optionsDialog.show();
     }
-    public void saveDatabase(String name,String fileName){
-        try{
-            SQLiteDatabase.openDatabase(fileName,null, SQLiteDatabase.OPEN_READWRITE);
-            addAndSaveDatabase(name, fileName);
-        }
-        catch(Exception e){
-            Toast.makeText(this,e.getMessage(),Toast.LENGTH_LONG).show();
-        }
-    }
-    public void addDatabaseFromPath(){
+
+
+    public void showNewDatabaseFromPathAlert(){
         AlertDialog.Builder alert = new AlertDialog.Builder(c);
         alert.setTitle(c.getString(R.string.mainActivity_add_db_insert_path));
         // Set an EditText view to get user input
@@ -200,9 +131,10 @@ public class MainActivity extends BaseProjectActivity {
                 String value = input.getText().toString();
                 int barra = value.lastIndexOf("/");
                 int punto = value.lastIndexOf(".");
+
                 if (punto == -1) punto = value.length();
                 String fileName = value.substring(1 + barra, punto);
-                saveDatabase(value, fileName);
+                mPresenter.saveDatabase(value, fileName);
             }
         });
         alert.setNegativeButton(c.getString(R.string.cancel), new DialogInterface.OnClickListener() {
@@ -214,7 +146,7 @@ public class MainActivity extends BaseProjectActivity {
     }
 
 
-    public void createNewDatabase(){
+    public void showNewDatabaseAlert(){
         AlertDialog.Builder alert = new AlertDialog.Builder(c);
         alert.setTitle(c.getString(R.string.mainActivity_add_db_insert_path));
         // Set an EditText view to get user input
@@ -232,9 +164,7 @@ public class MainActivity extends BaseProjectActivity {
                 String path = pathBox.getText().toString();
                 String name = nameBox.getText().toString();
                 try {
-                    //    SQLiteOpenHelper = new SQLiteOpenHelper(c,path+name,null,1);
-                    //SQLiteDatabase db=SQLiteDatabase.openOrCreateDatabase(path + name, null);
-                    addAndSaveDatabase(path + "/" + name, name);
+                    mPresenter.addAndSaveDatabase(path + "/" + name, name);
                 } catch (Exception e) {
                     Toast.makeText(c, e.getMessage(), Toast.LENGTH_LONG).show();
                 }
@@ -250,52 +180,24 @@ public class MainActivity extends BaseProjectActivity {
     }
 
 
-
-
-    private void showFileChooser() {
-        Intent chooseFile;
-        Intent intent;
-        chooseFile = new Intent(Intent.ACTION_GET_CONTENT);
-        chooseFile.setType("application/octet-stream");
-        intent = Intent.createChooser(chooseFile, c.getString(R.string.mainActivity_file_chooser_title));
-        startActivityForResult(intent, ACTIVITY_CHOOSE_FILE);
-    }
-
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        String filePath;
         if (resultCode != RESULT_OK) return;
         if(requestCode == ACTIVITY_CHOOSE_FILE) {///If the request was the file chooser, we check the path for a valid db and save it
-            Uri uri = data.getData();
-            filePath = DBUtils.getPath(c, uri);
-            if (filePath == null) filePath = uri.getPath();
-            try{
-                openOrCreateDatabase(filePath,SQLiteDatabase.OPEN_READWRITE,null);
-            }
-            catch(Exception e){
-                Toast.makeText(c,c.getString(R.string.mainActivity_wrong_file),Toast.LENGTH_LONG).show();
-            }
-            String fileName = filePath.substring(1 + filePath.lastIndexOf("/"), filePath.lastIndexOf('.'));
-            if (filePath.equals(""))
-                Toast.makeText(this, "errore, path nullo", Toast.LENGTH_LONG).show();
-            else {
-                addAndSaveDatabase(filePath, fileName);
-
-            }
+            mPresenter.checkAndSaveDatabase(data);
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    public void forgetAndSaveDatabase(final int position){
+    public void showForgetDatabaseAlert(final int position){
         final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(c);
-        alertDialogBuilder.setMessage(c.getString(R.string.mainActivity_forget_database) + myAdapter.getItemAt(position).getName() + " ?");
+        alertDialogBuilder.setMessage(c.getString(R.string.mainActivity_forget_database) +" " + myAdapter.getItemAt(position).getName() + " ?");
         alertDialogBuilder.setTitle(c.getString(R.string.action_confirm));
         alertDialogBuilder.setPositiveButton(c.getString(R.string.ok),
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface arg0, int arg1) {
-                        myAdapter.remove(position);
+                        mPresenter.forgetDatabase(position);
                     }
                 });
         alertDialogBuilder.setNegativeButton(c.getString(R.string.no),
@@ -309,13 +211,10 @@ public class MainActivity extends BaseProjectActivity {
         alertDialog.show();
 
     }
-    public void addAndSaveDatabase(String filePath,String fileName){
-
-        myAdapter.insert(new DatabaseHolder(fileName, filePath));
-    }
 
 
-    public void deleteAll(){
+
+    public void showDeleteAllAlert(){
         final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
         alertDialogBuilder.setMessage(c.getString(R.string.mainActivity_forget_all_dbs));
         alertDialogBuilder.setTitle(c.getString(R.string.action_confirm));
@@ -323,7 +222,7 @@ public class MainActivity extends BaseProjectActivity {
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface arg0, int arg1) {
-                        myAdapter.flush();
+                        mPresenter.forgetAllDatabases();
                     }
                 });
         alertDialogBuilder.setNegativeButton(c.getString(R.string.no),
@@ -355,29 +254,33 @@ public class MainActivity extends BaseProjectActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_deleteAll) {
-            deleteAll();
-
+            mPresenter.onDeleteAllPressed();
         }
         if (id == R.id.action_about) {
-            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-            alertDialogBuilder.setMessage("By Andrea Arduin");
-            alertDialogBuilder.setTitle(c.getString(R.string.action_about));
-            alertDialogBuilder.setNeutralButton(c.getString(R.string.ok),
-                    new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface arg0, int arg1) {
-                        }
-                    });
-            AlertDialog alertDialog = alertDialogBuilder.create();
-            alertDialog.show();
+            mPresenter.onAboutPressed();
         }
         if(id == R.id.action_settings){
-            Intent intent= new Intent(this,TempPreferenceActivity.class);
-            startActivity(intent);
+            mPresenter.startSettingsActivity();
         }
 
         return super.onOptionsItemSelected(item);
     }
+
+    protected void showAboutAlert() {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+        alertDialogBuilder.setMessage("By Andrea Arduin");
+        alertDialogBuilder.setTitle(c.getString(R.string.action_about));
+        alertDialogBuilder.setNeutralButton(c.getString(R.string.ok),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface arg0, int arg1) {
+                    }
+                });
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
+    }
+
+
     private Observable<DatabaseHolder> getTableObservable(){
         return Observable.create(new Observable.OnSubscribe<DatabaseHolder>() {
             @Override

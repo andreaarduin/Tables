@@ -5,7 +5,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -45,7 +44,7 @@ public class MainActivityAdapter extends RecyclerView.Adapter<MainActivityAdapte
         return new ViewHolder(v);
     }
 
-    public void remove(int position){
+    public void forget(int position){
         new SharedPreferencesOperations(c).forgetDatabase(position, data.size());
         data.remove(position);
         notifyItemRemoved(position);
@@ -77,7 +76,7 @@ public class MainActivityAdapter extends RecyclerView.Adapter<MainActivityAdapte
             itemView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
-                    instance.forgetAndSaveDatabase(getPosition());
+                    instance.showForgetDatabaseAlert(getPosition());
                     return false;
                 }
             });
