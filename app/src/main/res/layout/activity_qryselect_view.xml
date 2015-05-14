@@ -49,7 +49,7 @@
     </com.melnykov.fab.ObservableScrollView>
 
 
-        <include layout="@layout/fab_search"/>
+        <include layout="@layout/fab_query"/>
 
 
     </FrameLayout>

@@ -46,7 +46,7 @@
     <string name="DatabaseViewActivity_view_pragma">View table structure</string>
     <string name="DatabaseViewActivity_rename_table">Rename table</string>
     <string name="DatabaseViewActivity_delete_table_message">Are you sure you want to delete the table </string>
-    <string name="DatabaseViewActivity_sqlite_master">sqlite_master</string>
+    <string name="DatabaseViewActivity_info">info</string>
     <string name="yes">Yes</string>
     <string name="DatabaseViewActivity_rename_table_message">Insert the new name</string>
     <string name="error">Error</string>
@@ -71,4 +71,9 @@
     <string name="DatabaseViewInfoActivity_indexes">Indexes</string>
     <string name="DatabaseViewInfoActivity_hashcode">Hashcode</string>
     <string name="DatabaseViewInfoActivity_lastedit">Last edit</string>
+    <string name="mainActivity_close_confirmation_message">Are you sure you want to close Tables?</string>
+    <string name="mainActivity_close_confirmation_title">Quit Tables?</string>
+    <string name="mainActivity_add_db_new">New</string>
+    <string name="DatabaseInfoActivity_delete_title">Confirm</string>
+    <string name="DatabaseInfoActivity_delete_message">Are you sure you want to delete this database? The operation will not be cancelable</string>
 </resources>

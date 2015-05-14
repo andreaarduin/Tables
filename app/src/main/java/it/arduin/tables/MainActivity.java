@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -62,6 +63,61 @@ public class MainActivity extends BaseProjectActivity {
         loadDBs();
     }
 
+    //pitchy patchy way to hide the bottom menu when 'menu' physical button gets pressed, instead showing the overflow menu
+    @Override
+    public boolean onKeyDown(int keycode, KeyEvent e) {
+        switch(keycode) {
+            case KeyEvent.KEYCODE_MENU:
+                getSupportActionBar().openOptionsMenu();
+                return true;
+        }
+
+        return super.onKeyDown(keycode, e);
+    }
+
+    @Override
+    public void onBackPressed(){
+        mPresenter.onBackButtonPressed();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode != RESULT_OK) return;
+        if(requestCode == ACTIVITY_CHOOSE_FILE) {///If the request was the file chooser, we check the path for a valid db and save it
+            mPresenter.checkAndSaveDatabase(data);
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_deleteAll) {
+            mPresenter.onDeleteAllPressed();
+        }
+        if (id == R.id.action_about) {
+            mPresenter.onAboutPressed();
+        }
+        if(id == R.id.action_settings){
+            mPresenter.startSettingsActivity();
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+
     private void initList(){
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.setItemAnimator(new FadeInLeftAnimator());
@@ -88,6 +144,25 @@ public class MainActivity extends BaseProjectActivity {
         });
 
     }
+
+    public void showCloseAlert() {
+        AlertDialog.Builder alert = new AlertDialog.Builder(c);
+        alert.setTitle(c.getString(R.string.mainActivity_close_confirmation_title));
+        alert.setMessage(c.getString(R.string.mainActivity_close_confirmation_message));
+        alert.setPositiveButton(c.getString(R.string.ok), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                mPresenter.onClosePressed();
+            }
+        });
+        alert.setNegativeButton(c.getString(R.string.no), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+            }
+        });
+        alert.create().show();
+    }
+
     public void showNewDatabasePopup(){
         AlertDialog optionsDialog;
         DialogInterface.OnClickListener dialogListener = new DialogInterface.OnClickListener() {
@@ -180,14 +255,7 @@ public class MainActivity extends BaseProjectActivity {
     }
 
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode != RESULT_OK) return;
-        if(requestCode == ACTIVITY_CHOOSE_FILE) {///If the request was the file chooser, we check the path for a valid db and save it
-            mPresenter.checkAndSaveDatabase(data);
-        }
-        super.onActivityResult(requestCode, resultCode, data);
-    }
+
 
     public void showForgetDatabaseAlert(final int position){
         final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(c);
@@ -238,33 +306,6 @@ public class MainActivity extends BaseProjectActivity {
 
 
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_deleteAll) {
-            mPresenter.onDeleteAllPressed();
-        }
-        if (id == R.id.action_about) {
-            mPresenter.onAboutPressed();
-        }
-        if(id == R.id.action_settings){
-            mPresenter.startSettingsActivity();
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
 
     protected void showAboutAlert() {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
@@ -344,4 +385,6 @@ public class MainActivity extends BaseProjectActivity {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(mySubscriber);
     }
+
+
 }

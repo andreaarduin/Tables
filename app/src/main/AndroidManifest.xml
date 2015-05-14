@@ -82,7 +82,7 @@
             android:label="@string/title_activity_temp_preference" >
         </activity>
         <activity
-            android:name=".DatabaseViewInfoActivity"
+            android:name=".DatabaseInfoActivity"
             android:label="@string/title_activity_database_view_info"
             android:parentActivityName=".DatabaseViewActivity" >
             <meta-data

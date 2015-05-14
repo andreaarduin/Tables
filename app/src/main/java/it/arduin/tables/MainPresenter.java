@@ -86,4 +86,11 @@ public class MainPresenter {
     public void onAboutPressed() {
         mActivity.showAboutAlert();
     }
+    public void onBackButtonPressed(){
+        mActivity.showCloseAlert();
+    }
+
+    public void onClosePressed() {
+        mActivity.finish();
+    }
 }

@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.io.File;
 import java.util.ArrayList;
 
 public class DatabaseHolder implements Parcelable {
@@ -113,5 +114,15 @@ public class DatabaseHolder implements Parcelable {
     }
     public int getIndexNumber(){
         return getIndexes().size();
+    }
+
+    public void delete() throws Exception{
+        try{
+            File f= new File(path);
+            f.delete();
+        }
+        catch (Exception e){
+            throw e;
+        }
     }
 }

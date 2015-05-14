@@ -20,8 +20,7 @@
                 />
 
         </LinearLayout>
-        <include layout="@layout/fab_add"
-            android:src="@drawable/ic_action_add"
+        <include layout="@layout/fab_delete"
             />
     </FrameLayout>
 </LinearLayout>

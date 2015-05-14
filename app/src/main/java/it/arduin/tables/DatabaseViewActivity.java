@@ -10,10 +10,7 @@ import android.content.res.Configuration;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.SystemClock;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -21,10 +18,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
-import com.melnykov.fab.FloatingActionButton;
+
 import java.util.ArrayList;
 
-import butterknife.ButterKnife;
 import butterknife.InjectView;
 import jp.wasabeef.recyclerview.animators.FadeInLeftAnimator;
 import rx.Observable;
@@ -141,8 +137,8 @@ public class DatabaseViewActivity extends BaseProjectActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_sqlite_master) {
-            Intent intent=new Intent(c,DatabaseViewInfoActivity.class);
+        if (id == R.id.action_info) {
+            Intent intent=new Intent(c,DatabaseInfoActivity.class);
             intent.putExtra("db",dbh);
             intent.putExtra("path",path);
             startActivity(intent);
@@ -297,92 +293,6 @@ public class DatabaseViewActivity extends BaseProjectActivity {
         context.startActivity(intent);
     }
 
-    private class LoadTablesList extends AsyncTask<Object,TableHolder,Object> {
-        int tableNumber, done;
-        ProgressDialog progressPopup;
-        Context context;
-        SQLiteDatabase db;
-        //ArrayList<TableHolder> list;
-        private LoadTablesList(Context context) {
-            this.context = context;
-        }
-
-
-
-        @Override
-        protected void onPreExecute() {
-            lockScreenOrientation();
-            db = null;
-            try {
-                db = SQLiteDatabase.openDatabase(path, null, SQLiteDatabase.CREATE_IF_NECESSARY);
-            } catch (Exception e) {
-                Toast.makeText(c, e.getMessage(), Toast.LENGTH_LONG).show();
-                this.cancel(true);
-            }
-            if (db == null) Toast.makeText(c, getString(R.string.error), Toast.LENGTH_LONG).show();
-            else db.close();
-            progressPopup=new ProgressDialog(context);
-            progressPopup.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-            progressPopup.setIndeterminate(false);
-            progressPopup.setCancelable(false);
-            progressPopup.show();
-        }
-
-        @Override
-        protected Object doInBackground(Object... params) {
-            done = 0;
-            ArrayList<String> tables;
-            tables = dbh.getTables();
-            //Log.d("dim",""+tables.size());
-            tableNumber = tables.size();
-            progressPopup.setMax(tableNumber);
-            for (int i = 0; i < tables.size(); i++) {
-                publishProgress(new TableHolder(tables.get(i), ColumnPair.getStringDefinitionArray(DBUtils.getColumns(path, tables.get(i))),dbh));
-
-                /*try {
-                    Thread.sleep(300);
-                } catch (Exception e) {
-                }*/
-            }
-            return null;
-        }
-
-
-        @Override
-        protected void onPostExecute(Object param) {
-            progressPopup.dismiss();
-            setMRecyclerView();
-            unlockScreenOrientation();
-        }
-
-
-
-
-
-        @Override
-        protected void onProgressUpdate(TableHolder... param){
-            done++;
-            progressPopup.setProgress(done);
-            try{mAdapter.list.add(param[0]);}
-            catch(Exception e){
-                //Log.d("errore" ,param[0].toString());
-                }
-            mAdapter.notifyDataSetChanged();
-        }
-
-        private void lockScreenOrientation() {
-            int currentOrientation = getResources().getConfiguration().orientation;
-            if (currentOrientation == Configuration.ORIENTATION_PORTRAIT) {
-                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-            } else {
-                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-            }
-        }
-
-        private void unlockScreenOrientation() {
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
-        }
-    }
 
     private Observable<TableHolder> getTableObservable(){
         return Observable.create(new Observable.OnSubscribe<TableHolder>() {
@@ -391,7 +301,7 @@ public class DatabaseViewActivity extends BaseProjectActivity {
                 if(!dbh.isAccessible()) sub.onError(new Exception(getString(R.string.DatabaseViewActivity_error_opening_db)));
                 final ArrayList<String> tables = dbh.getTables();
                 //tableNumber = tables.size();
-                if(dbh.getTables().size()<=0) sub.onCompleted();
+                if(tables.size()==0) sub.onCompleted();
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -429,11 +339,13 @@ public class DatabaseViewActivity extends BaseProjectActivity {
 
             @Override
             public void onError(Throwable e) {
+                progressDialog.cancel();
                 Log.wtf("error",e.getLocalizedMessage());
             }
 
             @Override
             public void onNext(TableHolder tableHolder) {
+
                 done++;
                 //progressPopup.setProgress(done);
                 try{

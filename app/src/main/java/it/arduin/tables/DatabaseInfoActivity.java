@@ -1,5 +1,7 @@
 package it.arduin.tables;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.provider.MediaStore;
 import android.support.v7.app.ActionBarActivity;
@@ -9,6 +11,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -23,7 +26,7 @@ import butterknife.InjectView;
 import butterknife.OnClick;
 
 
-public class DatabaseViewInfoActivity extends BaseProjectActivity {
+public class DatabaseInfoActivity extends BaseProjectActivity {
     @InjectView(R.id.list)
     RecyclerView mRecyclerView;
     private SimpleTextAdapter mAdapter;
@@ -31,6 +34,7 @@ public class DatabaseViewInfoActivity extends BaseProjectActivity {
     FloatingActionButton fab;
     Toolbar toolbar;
     DatabaseHolder dbh;
+    DatabaseInfoPresenter mPresenter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,6 +51,13 @@ public class DatabaseViewInfoActivity extends BaseProjectActivity {
         mAdapter = new SimpleTextAdapter();
         mRecyclerView.setAdapter(mAdapter);
         loadInfo();
+        mPresenter=new DatabaseInfoPresenter(this);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mPresenter.onFabClicked();
+            }
+        });
     }
 
     public void loadInfo(){
@@ -55,15 +66,29 @@ public class DatabaseViewInfoActivity extends BaseProjectActivity {
         mAdapter.add(getString(R.string.DatabaseViewInfoActivity_filesize), f.length() + " bytes");
         mAdapter.add(getString(R.string.DatabaseViewInfoActivity_filesize), (int) (f.length() / 1024) + " KB");
         mAdapter.add(getString(R.string.DatabaseViewInfoActivity_tables), dbh.getTableNumber() + "");
-        mAdapter.add(getString(R.string.DatabaseViewInfoActivity_indexes),dbh.getIndexNumber()+"");
+        mAdapter.add(getString(R.string.DatabaseViewInfoActivity_indexes), dbh.getIndexNumber() + "");
         mAdapter.add(getString(R.string.DatabaseViewInfoActivity_hashcode), f.hashCode() + "");
         SimpleDateFormat s= new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
         mAdapter.add(getString(R.string.DatabaseViewInfoActivity_lastedit), s.format(f.lastModified()));
     }
 
-
+//@Todo remove favourite database when deleted
     public void showDeletePopup(){
-        Toast.makeText(this,"dassd",Toast.LENGTH_LONG).show();
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+        alert.setTitle(getString(R.string.DatabaseInfoActivity_delete_title));
+        alert.setMessage(getString(R.string.DatabaseInfoActivity_delete_message));
+        alert.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                mPresenter.deleteDatabase();
+            }
+        });
+        alert.setNegativeButton(getString(R.string.no), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+            }
+        });
+        alert.create().show();
     }
 
     @Override
@@ -80,11 +105,10 @@ public class DatabaseViewInfoActivity extends BaseProjectActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
         return super.onOptionsItemSelected(item);
+    }
+
+    public void showError(Exception e) {
+        Toast.makeText(this,e.getLocalizedMessage(),Toast.LENGTH_LONG).show();
     }
 }
