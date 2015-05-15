@@ -57,6 +57,12 @@ public class DatabaseViewAdapter extends RecyclerView.Adapter<DatabaseViewAdapte
         return new ViewHolder(itemView);
     }
 
+    public TableHolder getItemAt(int position) {
+        return list.get(position);
+    }
+    public void empty(){
+        list=new ArrayList<>();
+    }
     public class ViewHolder extends RecyclerView.ViewHolder {
         public TextView name;
         public TextView fields;

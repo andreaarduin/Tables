@@ -16,7 +16,7 @@ public class MainPresenter {
     }
 
     public void addAndSaveDatabase(String filePath,String fileName){
-        DatabaseHolder d = new DatabaseHolder(fileName,filePath);
+        DatabaseHolder d = new DatabaseHolder(fileName,filePath,mActivity.myAdapter.getItemCount());
         new SharedPreferencesOperations(mActivity).addAndSaveDatabase(d.getPath(),d.getName(), mActivity.myAdapter.getItemCount());
         mActivity.myAdapter.add(d);
     }

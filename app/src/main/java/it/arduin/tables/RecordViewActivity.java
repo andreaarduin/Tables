@@ -14,10 +14,13 @@ import android.text.Editable;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.melnykov.fab.FloatingActionButton;
 
 import java.util.ArrayList;
 
@@ -26,26 +29,30 @@ import butterknife.InjectView;
 import jp.wasabeef.recyclerview.animators.LandingAnimator;
 
 
-public class RecordViewActivity extends ActionBarActivity {
-    static Context c;
+public class RecordViewActivity extends BaseProjectActivity {
+    Context c;
     ArrayList<String> columnValues,columnNames;
     int columns;
     String table,path;
+    Boolean customQuery;
     static int modified;
     @InjectView(R.id.toolbar) Toolbar toolbar;
     @InjectView(R.id.list) RecyclerView mRecyclerView;
+    @InjectView(R.id.fab)
+    FloatingActionButton fab;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //Log.d("columns", "dfsa");
         setContentView(R.layout.activity_record_view);
-        ButterKnife.inject(this);
         c=this;
         modified=0;
         //retrieve intent
         Intent intent=getIntent();
         columnValues=intent.getStringArrayListExtra("values");
         columnNames=intent.getStringArrayListExtra("names");
+        customQuery=intent.getBooleanExtra("customQuery",true);
+        if(customQuery) fab.hide();
         for(int i=0;i<columnNames.size();i++)
             Log.wtf("cnrv",columnNames.get(i));
         columns=columnValues.size();
@@ -65,6 +72,15 @@ public class RecordViewActivity extends ActionBarActivity {
         mRecyclerView.setItemAnimator(new LandingAnimator());
         RecordViewListAdapter myAdapter = new RecordViewListAdapter(columnNames,columnValues, this);
         mRecyclerView.setAdapter(myAdapter);
+
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                applyChanges();
+                finish();
+            }
+        });
+        fab.attachToRecyclerView(mRecyclerView);
     }
 
     public static void onUserInput(Editable s){
@@ -116,6 +132,7 @@ public class RecordViewActivity extends ActionBarActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
+        if(customQuery) return true;
         getMenuInflater().inflate(R.menu.menu_record_view, menu);
         return true;
     }
@@ -142,10 +159,10 @@ public class RecordViewActivity extends ActionBarActivity {
             deleteThisRecord();
             return true;
         }
-        if (id == R.id.action_recordApplychanges) {
+        /*if (id == R.id.action_recordApplychanges) {
             applyChanges();
             return true;
-        }
+        }*/
         return super.onOptionsItemSelected(item);
     }
 

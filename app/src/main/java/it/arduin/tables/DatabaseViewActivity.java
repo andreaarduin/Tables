@@ -5,10 +5,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
-import android.content.res.Configuration;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.Toolbar;
@@ -22,7 +19,6 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 import butterknife.InjectView;
-import jp.wasabeef.recyclerview.animators.FadeInLeftAnimator;
 import rx.Observable;
 import rx.Subscriber;
 import rx.Subscription;
@@ -30,16 +26,18 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 public class DatabaseViewActivity extends BaseProjectActivity {
+    protected static final int DATABASE_INFO = 8;
+    protected static final int DATABASE_DELETED = 9;
     public Context c;
-    private ArrayList<TableHolder> list;
-    private String path;
-    private DatabaseViewAdapter mAdapter;
-    private DatabaseHolder dbh;
+    DatabaseViewPresenter mPresenter;
+    protected String path;
+    protected DatabaseViewAdapter mAdapter;
+    protected DatabaseHolder dbh;
     private ProgressDialog progressDialog;
     final static int ACTION_DELETE_TABLE=0;
     final static int ACTION_RENAME_TABLE=1;
     final static int ACTION_VIEW_PRAGMA_TABLE=2;
-    private Toolbar toolbar;
+    protected Toolbar toolbar;
     @InjectView(R.id.list) android.support.v7.widget.RecyclerView mRecyclerView;
     @InjectView(R.id.fab) com.melnykov.fab.FloatingActionButton fab;
     @Override
@@ -56,10 +54,11 @@ public class DatabaseViewActivity extends BaseProjectActivity {
             dbh=intent.getParcelableExtra("db");
             path=dbh.getPath();
         }
+        mPresenter=new DatabaseViewPresenter(this);
         //dichiarazioni
 
 //toolbar settings------------------------------------------------------
-        toolbar = ToolbarUtils.getSettedToolbar(this,R.id.toolbar);
+        toolbar = ViewUtils.getSettedToolbar(this, R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         try{
@@ -71,19 +70,16 @@ public class DatabaseViewActivity extends BaseProjectActivity {
         }
         catch(Exception e){Toast.makeText(c,e.getMessage(),Toast.LENGTH_LONG).show();}
 
-        list= new ArrayList<>();
-        mAdapter = new DatabaseViewAdapter(list,this);
+        mAdapter = new DatabaseViewAdapter(new ArrayList<TableHolder>(),this);
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         //new LoadTablesList(c).execute();
         loadTables();
+        setMRecyclerView();
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent=new Intent(c,CreateTableActivity.class);
-                intent.putExtra("path",path);
-                intent.putExtra("name",toolbar.getTitle()+",new table");
-                startActivityForResult(intent, 1);
+                mPresenter.onFabClick();
             }
         });
 
@@ -93,32 +89,13 @@ public class DatabaseViewActivity extends BaseProjectActivity {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.addOnItemTouchListener(
                 new RecyclerItemClickListener(c, new RecyclerItemClickListener.OnItemClickListener() {
-                    @Override public void onItemClick(View view, int position) {
-                        Intent intent=new Intent(c,QuerySelectViewActivity.class);
-                        String query="SELECT ";
-                        ArrayList<ColumnPair> definitions=DBUtils.getColumns(path,list.get(position).getName());
-                        String[] columnTypes= ColumnPair.getTypeArray(definitions);
-                        String []columnNames= ColumnPair.getNameArray(definitions);
-                        int columns=columnNames.length;
-                        for(int i=0;i<columns;i++){
-                            if(columnTypes[i].toLowerCase().trim().equals("blob")) query+="quote("+columnNames[i]+")";
-                            else query+=columnNames[i];
-                            if(i!=columns-1) query+=",";
-                        }
-                        query+=" FROM "+ list.get(position).getName();
-                        query+=" LIMIT "+ SettingsActivity.getQueryLimit(getContext());
-                        Log.d("qry",query);
-                        intent.putExtra("query",query);
-                        intent.putExtra("table",list.get(position).getName());
-                        intent.putExtra("customQuery",false);
-                        intent.putExtra("path",path);
-                        // ((dataContainer)getApplication()).db=db;
-                        startActivity(intent);                    }
+                    @Override
+                    public void onItemClick(View view, int position) {
+                        mPresenter.onRecyclerItemPressed(view,position);
+                    }
                 })
         );
-        mRecyclerView.setItemAnimator(new FadeInLeftAnimator());
-        mRecyclerView.getItemAnimator().setAddDuration(600);
-        mRecyclerView.getItemAnimator().setRemoveDuration(600);
+        ViewUtils.setRecyclerViewAnimator(mRecyclerView);
     }
 
 
@@ -138,10 +115,7 @@ public class DatabaseViewActivity extends BaseProjectActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_info) {
-            Intent intent=new Intent(c,DatabaseInfoActivity.class);
-            intent.putExtra("db",dbh);
-            intent.putExtra("path",path);
-            startActivity(intent);
+            mPresenter.onActionInfoPressed();
         }
 
         return super.onOptionsItemSelected(item);
@@ -156,7 +130,13 @@ public class DatabaseViewActivity extends BaseProjectActivity {
 
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if ( requestCode == DATABASE_INFO && resultCode == DATABASE_DELETED){///
+            finish();
+        }
+        mPresenter.onActivityResult();
+    }//onActivityResult
 
+    public void showReloadAlert(){
         final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder( c);
         // set title
         alertDialogBuilder.setTitle(getString(R.string.action_confirm));
@@ -166,8 +146,7 @@ public class DatabaseViewActivity extends BaseProjectActivity {
                 .setCancelable(false)
                 .setPositiveButton(getString(R.string.yes),new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog,int id) {
-                        mAdapter.list=new ArrayList<TableHolder>();
-                        loadTables();
+                        mPresenter.reloadTables();
                     }
                 })
                 .setNegativeButton(getString(R.string.no), new DialogInterface.OnClickListener() {
@@ -177,8 +156,7 @@ public class DatabaseViewActivity extends BaseProjectActivity {
                 });
         AlertDialog alertDialog = alertDialogBuilder.create();
         alertDialog.show();
-    }//onActivityResult
-
+    }
 
     public void showOptionsMenu(final String name, final int position){
         AlertDialog optionsDialog;
@@ -187,13 +165,13 @@ public class DatabaseViewActivity extends BaseProjectActivity {
             public void onClick(DialogInterface dialog, int which) {
                     switch (which) {
                         case ACTION_DELETE_TABLE:
-                            deleteTableFromDB(name,position);
+                            mPresenter.onDeleteOptionPressed(name, position);
                             break;
                         case ACTION_RENAME_TABLE:
-                            renameTable(name,position);
+                            mPresenter.onRenameOptionPressed(name, position);
                             break;
                         case ACTION_VIEW_PRAGMA_TABLE:
-                            viewTableInfo(name, position,c);
+                            mPresenter.viewTableInfo(name, position,c);
                             break;
 
                 }
@@ -210,88 +188,6 @@ public class DatabaseViewActivity extends BaseProjectActivity {
         optionsDialog.show();
     }
 
-
-
-    public void deleteTableFromDB(final String name,final int position){
-        final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder( c);
-        // set title
-        alertDialogBuilder.setTitle(getString(R.string.action_confirm));
-        // set dialog message
-        alertDialogBuilder
-                .setMessage(getString(R.string.DatabaseViewActivity_delete_table_message)+name+" ?")
-                .setCancelable(false)
-                .setPositiveButton(getString(R.string.yes),new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog,int id) {
-
-                        //String path=DatabaseView.path;
-                        try{
-                            String sql="DROP TABLE IF EXISTS '"+name+"'";
-                            //Toast.makeText(DatabaseView.c,sql,Toast.LENGTH_LONG).show();
-                            SQLiteDatabase db=SQLiteDatabase.openDatabase(path,null,SQLiteDatabase.OPEN_READWRITE);
-                            db.execSQL(sql);
-                            db.close();
-                            DatabaseViewAdapter ad=(DatabaseViewAdapter)mRecyclerView.getAdapter();
-                            ad.remove(position);
-                        }
-                        catch (Exception e){
-                            Toast.makeText(c,e.getMessage(),Toast.LENGTH_LONG).show();
-                        }
-                    }
-                })
-                .setNegativeButton(getString(R.string.no), new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.cancel();
-                    }
-                });
-
-        // create alert dialog
-        AlertDialog alertDialog = alertDialogBuilder.create();
-        // show it
-        alertDialog.show();
-
-
-    }
-    public void renameTable(final String name,final int position){
-        AlertDialog.Builder alert = new AlertDialog.Builder(c);
-        alert.setTitle(getString(R.string.DatabaseViewActivity_rename_table_message));
-        // Set an EditText view to get user input
-        final EditText nameBox = new EditText(c);
-        nameBox.setText(name);
-        alert.setView(nameBox);
-        alert.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                String input = nameBox.getText().toString();
-                try {
-                    SQLiteDatabase db;
-                    db=SQLiteDatabase.openDatabase(path, null, SQLiteDatabase.CREATE_IF_NECESSARY);
-                    db.execSQL("ALTER TABLE '"+name+"' RENAME TO '"+input+"'");
-                    TableHolder t=mAdapter.list.get(position);
-                    t=new TableHolder(input,t.getFields(),dbh);
-                    mAdapter.list.set(position,t);
-                    mAdapter.notifyDataSetChanged();
-
-                    //Toast.makeText(c,input,Toast.LENGTH_LONG).show();
-                }
-                catch(Exception e){Toast.makeText(c,e.getMessage(),Toast.LENGTH_LONG).show();}
-
-            }
-        });
-        alert.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                // Canceled.
-            }
-        });
-        alert.show();
-    }
-    public void viewTableInfo(final String name, final int position,Context context){
-        Intent intent=new Intent(c,QuerySelectViewActivity.class);
-        String table=name;
-        intent.putExtra("query","PRAGMA table_info('"+table+"')");
-        intent.putExtra("table",table);
-        intent.putExtra("customQuery",true);
-        intent.putExtra("path",path);
-        context.startActivity(intent);
-    }
 
 
     private Observable<TableHolder> getTableObservable(){
@@ -316,25 +212,18 @@ public class DatabaseViewActivity extends BaseProjectActivity {
         });
     }
 
-
-
     private Subscriber<TableHolder> getTableSubscriber(){
         return new Subscriber<TableHolder>() {
             int done=0;
             @Override
             public void onStart(){
                 request(1);
-                progressDialog = new ProgressDialog(getContext());
-                progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-                progressDialog.setIndeterminate(false);
-                progressDialog.setCancelable(false);
-                progressDialog.setMessage(getString(R.string.QuerySelectViewActivity_loading_message));//cambia stringa mouna
+                progressDialog = ViewUtils.getSettedCancelableProgressDialog(DatabaseViewActivity.this,getString(R.string.DatabaseViewActivity_loading_message));
                 progressDialog.show();
             }
             @Override
             public void onCompleted() {
-                setMRecyclerView();
-                progressDialog.cancel();
+                progressDialog.dismiss();
             }
 
             @Override
@@ -351,21 +240,67 @@ public class DatabaseViewActivity extends BaseProjectActivity {
                 try{
                     mAdapter.add(tableHolder);
                 }
-                catch(Exception e){
+                catch(Exception e) {
                     //Log.d("errore" ,param[0].toString());
                 }
-                mAdapter.notifyDataSetChanged();
                 request(1);
             }
         };
     }
 
-    private void loadTables(){
+    protected void loadTables(){
         Observable<TableHolder> myObservable=getTableObservable();
         Subscriber<TableHolder> mySubscriber=getTableSubscriber();
         Subscription mySubscription = myObservable.onBackpressureBuffer()
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(mySubscriber);
+    }
+
+    public void showDeleteTableAlert(final String name,final int position) {
+        final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder( c);
+        // set title
+        alertDialogBuilder.setTitle(getString(R.string.action_confirm));
+        // set dialog message
+        alertDialogBuilder
+                .setMessage(getString(R.string.DatabaseViewActivity_delete_table_message)+name+" ?")
+                .setCancelable(false)
+                .setPositiveButton(getString(R.string.yes),new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog,int id) {
+                        mPresenter.deleteTable(name,position);
+                    }
+                })
+                .setNegativeButton(getString(R.string.no), new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+
+        // create alert dialog
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        // show it
+        alertDialog.show();
+    }
+
+    public void showRenameAlert(final String name,final int position) {
+        AlertDialog.Builder alert = new AlertDialog.Builder(c);
+        alert.setTitle(getString(R.string.DatabaseViewActivity_rename_table_message));
+        // Set an EditText view to get user input
+        final EditText nameBox = new EditText(c);
+        nameBox.setText(name);
+        alert.setView(nameBox);
+        alert.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                String input = nameBox.getText().toString();
+                mPresenter.renameTable(name,position,input);
+
+            }
+        });
+        alert.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                // Canceled.
+            }
+        });
+        alert.show();
     }
 }

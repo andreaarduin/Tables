@@ -44,6 +44,15 @@ public class SharedPreferencesOperations {
         Log.wtf("size up", "" + (max - 1));
         editor.apply();
     }
+    public void forgetDatabase(int position){
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.remove("path"+position);
+        editor.remove("name" + position);
+        int max=getSize(0);
+        editor.putInt("size",max-1);
+        Log.wtf("size down", "" + (max - 1));
+        editor.apply();
+    }
     public ArrayList<DatabaseHolder> loadList() throws Exception{
         int size=getSize(0);
         Log.wtf("sizei",size+"");
@@ -56,7 +65,7 @@ public class SharedPreferencesOperations {
             catch(Exception e){
                 throw e;
             }
-            list.add(new DatabaseHolder(name, path));
+            list.add(new DatabaseHolder(name, path,i));
         }
         Log.wtf("sizef",list.size()+"");
         return list;

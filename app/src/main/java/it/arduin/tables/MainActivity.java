@@ -5,9 +5,6 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
-import android.content.res.Configuration;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.Toolbar;
@@ -25,6 +22,7 @@ import java.util.ArrayList;
 
 import butterknife.InjectView;
 import jp.wasabeef.recyclerview.animators.FadeInLeftAnimator;
+import jp.wasabeef.recyclerview.animators.OvershootInLeftAnimator;
 import rx.Observable;
 import rx.Subscriber;
 import rx.Subscription;
@@ -56,11 +54,11 @@ public class MainActivity extends BaseProjectActivity {
         mPresenter=new MainPresenter(this);
         prefs = new SharedPreferencesOperations(c);
         //---------------toolbar
-        toolbar = ToolbarUtils.getSettedToolbar(this,R.id.toolbar);
+        toolbar = ViewUtils.getSettedToolbar(this, R.id.toolbar);
         list= new ArrayList<>();
         initList();
         //new loadDBSTask(this).execute();
-        loadDBs();
+        //carica nell' onresume
     }
 
     //pitchy patchy way to hide the bottom menu when 'menu' physical button gets pressed, instead showing the overflow menu
@@ -88,7 +86,11 @@ public class MainActivity extends BaseProjectActivity {
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
-
+    @Override
+    public void onResume(){
+        super.onResume();
+        loadDBs();
+    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -120,9 +122,7 @@ public class MainActivity extends BaseProjectActivity {
 
     private void initList(){
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        mRecyclerView.setItemAnimator(new FadeInLeftAnimator());
-        mRecyclerView.getItemAnimator().setAddDuration(600);
-        mRecyclerView.getItemAnimator().setRemoveDuration(600);
+        ViewUtils.setRecyclerViewAnimator(mRecyclerView);
         mRecyclerView.addOnItemTouchListener(
                 new RecyclerItemClickListener(c, new RecyclerItemClickListener.OnItemClickListener() {
                     @Override
@@ -333,7 +333,6 @@ public class MainActivity extends BaseProjectActivity {
                 }
                 for (int i = 0; i < list.size(); i++) sub.onNext(list.get(i));
                 progressDialog.setMax(list.size());
-                Log.wtf("size", "" + list.size());
                 sub.onCompleted();
             }
         });
@@ -344,17 +343,14 @@ public class MainActivity extends BaseProjectActivity {
             int done=0;
             @Override
             public void onStart(){
+
+                myAdapter.empty();
                 request(1);
-                progressDialog = new ProgressDialog(getContext());
-                progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-                progressDialog.setIndeterminate(false);
-                progressDialog.setCancelable(false);
-                progressDialog.setMessage(getString(R.string.QuerySelectViewActivity_loading_message));//cambia stringa mouna
-                progressDialog.show();
+                progressDialog = ViewUtils.getSettedProgressDialog(MainActivity.this,getString(R.string.mainActivity_loading_message));
             }
             @Override
             public void onCompleted() {
-                progressDialog.cancel();
+                progressDialog.dismiss();
             }
 
             @Override

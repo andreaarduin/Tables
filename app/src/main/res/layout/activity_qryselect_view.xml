@@ -43,7 +43,9 @@
                 android:layout_height="match_parent"
                 android:layout_gravity="bottom">
 
-
+                    <TableRow
+                        android:background="@drawable/flat_list_background">
+                    </TableRow>
             </TableLayout>
         </HorizontalScrollView>
     </com.melnykov.fab.ObservableScrollView>

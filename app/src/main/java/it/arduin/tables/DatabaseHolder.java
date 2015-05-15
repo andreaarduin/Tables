@@ -12,6 +12,7 @@ import java.util.ArrayList;
 public class DatabaseHolder implements Parcelable {
     private String name;
     private String path;
+    private int index;
     //base
     public String getName(){
         return name;
@@ -19,15 +20,18 @@ public class DatabaseHolder implements Parcelable {
     public String getPath(){
         return path;
     }
+    public int getIndex(){return index;}
 
-    public DatabaseHolder(String text, String desc) {
+    public DatabaseHolder(String text, String desc,int index) {
         this.name = text;
         this.path=desc;
+        this.index=index;
     }
     //parcelable
     public DatabaseHolder(Parcel source){
         name=source.readString();
         path=source.readString();
+        index=source.readInt();
     }
     @Override
     public int describeContents(){
@@ -37,6 +41,7 @@ public class DatabaseHolder implements Parcelable {
     public void writeToParcel(Parcel dest,int flags){
         dest.writeString(name);
         dest.writeString(path);
+        dest.writeInt(index);
     }
     public final static Creator CREATOR = new Creator(){
         @Override

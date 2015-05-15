@@ -11,17 +11,21 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.melnykov.fab.FloatingActionButton;
+
 import java.util.ArrayList;
 
+import butterknife.InjectView;
 import jp.wasabeef.recyclerview.animators.LandingAnimator;
 
 
-public class RecordAddActivity extends ActionBarActivity {
+public class RecordAddActivity extends BaseProjectActivity {
 
     Context c;
     RecyclerView mRecyclerView;
@@ -30,6 +34,8 @@ public class RecordAddActivity extends ActionBarActivity {
     int columns;
     String table,path;
     Intent intent;
+    @InjectView(R.id.fab)
+    FloatingActionButton fab;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,7 +67,13 @@ public class RecordAddActivity extends ActionBarActivity {
         mRecyclerView.setItemAnimator(new LandingAnimator());
         RecordAddListAdapter myAdapter = new RecordAddListAdapter(columnNames,columnValues, this);
         mRecyclerView.setAdapter(myAdapter);
-
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                insertNewRecord();
+                finish();
+            }
+        });
     }
 
     @Override

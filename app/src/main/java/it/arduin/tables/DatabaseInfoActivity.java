@@ -3,8 +3,6 @@ package it.arduin.tables;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.provider.MediaStore;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -12,18 +10,14 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.Toast;
 
 import com.melnykov.fab.FloatingActionButton;
 
 import java.io.File;
-import java.net.URLConnection;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import butterknife.InjectView;
-import butterknife.OnClick;
 
 
 public class DatabaseInfoActivity extends BaseProjectActivity {
@@ -43,7 +37,7 @@ public class DatabaseInfoActivity extends BaseProjectActivity {
             Intent i = getIntent();
             dbh=i.getParcelableExtra("db");
         }
-        toolbar = ToolbarUtils.getSettedToolbar(this,R.id.toolbar);
+        toolbar = ViewUtils.getSettedToolbar(this, R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         toolbar.setTitle(dbh.getName());
@@ -72,7 +66,7 @@ public class DatabaseInfoActivity extends BaseProjectActivity {
         mAdapter.add(getString(R.string.DatabaseViewInfoActivity_lastedit), s.format(f.lastModified()));
     }
 
-//@Todo remove favourite database when deleted
+
     public void showDeletePopup(){
         AlertDialog.Builder alert = new AlertDialog.Builder(this);
         alert.setTitle(getString(R.string.DatabaseInfoActivity_delete_title));
@@ -109,6 +103,6 @@ public class DatabaseInfoActivity extends BaseProjectActivity {
     }
 
     public void showError(Exception e) {
-        Toast.makeText(this,e.getLocalizedMessage(),Toast.LENGTH_LONG).show();
+        Toast.makeText(this,"e"+e.getLocalizedMessage(),Toast.LENGTH_LONG).show();
     }
 }

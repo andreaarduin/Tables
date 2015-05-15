@@ -4,6 +4,6 @@
     tools:context="it.arduin.tables.RecordViewActivity">
     <item android:id="@+id/action_recordDelete" android:title="@string/action_recordDelete" android:icon="@drawable/ic_action_delete"
         android:orderInCategory="100" app:showAsAction="ifRoom" />
-    <item android:id="@+id/action_recordApplychanges" android:title="@string/action_recordApplyChanges" android:icon="@drawable/ic_action_done"
-    android:orderInCategory="100" app:showAsAction="ifRoom" />
+   <!--<item android:id="@+id/action_recordApplychanges" android:title="@string/action_recordApplyChanges" android:icon="@drawable/ic_action_done"
+    android:orderInCategory="100" app:showAsAction="ifRoom" />-->
 </menu>

@@ -54,6 +54,10 @@ public class MainActivityAdapter extends RecyclerView.Adapter<MainActivityAdapte
         new SharedPreferencesOperations(c).deleteAll();
         notifyDataSetChanged();
     }
+    public void empty(){
+        data=new ArrayList<>();
+        notifyDataSetChanged();
+    }
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, int i) {
         DatabaseHolder c = data.get(i);

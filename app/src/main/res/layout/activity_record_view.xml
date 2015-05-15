@@ -24,6 +24,6 @@
             android:descendantFocusability="beforeDescendants"
             android:focusableInTouchMode="true"
             />
-
+        <include layout="@layout/fab_done"/>
     </FrameLayout>
 </LinearLayout>

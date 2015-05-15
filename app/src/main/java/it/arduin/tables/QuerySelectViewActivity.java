@@ -10,6 +10,8 @@ import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
+import android.graphics.drawable.RippleDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -28,6 +30,7 @@ import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.balysv.materialripple.MaterialRippleLayout;
 import com.melnykov.fab.ObservableScrollView;
 
 import java.util.ArrayList;
@@ -50,7 +53,7 @@ import static android.database.sqlite.SQLiteDatabase.openDatabase;
 import static android.graphics.Color.BLACK;
 
 
-public class QuerySelectViewActivity extends ActionBarActivity {
+public class QuerySelectViewActivity extends BaseProjectActivity {
     private String query;
     private String table;
     private String title;
@@ -70,7 +73,6 @@ public class QuerySelectViewActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_qryselect_view);
-        ButterKnife.inject(this);
         intent=getIntent();
         table=intent.getStringExtra("table");
         path=intent.getStringExtra("path");
@@ -249,7 +251,7 @@ public class QuerySelectViewActivity extends ActionBarActivity {
         ShortTextView tv0 = new ShortTextView(context);
         tv0.setTextColor(BLACK);
         tv0.setPadding(2, 2, 2, 2);
-        tv0.setBackgroundResource(R.drawable.border);
+        tv0.setBackgroundResource(R.drawable.borderselector);
         tv0.setMaxLines(1);
         return tv0;
     }
@@ -259,10 +261,8 @@ public class QuerySelectViewActivity extends ActionBarActivity {
         tbrow0.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(final View v) {
-                if (customQuery)
-                    intent = new Intent(getApplicationContext(), CustomRecordViewActivity.class);
-                if (!customQuery)
-                    intent = new Intent(getApplicationContext(), RecordViewActivity.class);
+                Intent intent=new Intent(QuerySelectViewActivity.this,RecordViewActivity.class);
+                intent.putExtra("customQuery",customQuery);
                 Log.d("columnNames", "" + columnNames.length);
                 intent.putStringArrayListExtra("names", new ArrayList<>(Arrays.asList(columnNames)));
                 intent.putExtra("table", table);
@@ -320,13 +320,15 @@ public class QuerySelectViewActivity extends ActionBarActivity {
                         TableRow tbrowh = new TableRow(context);
                         String s;
                         for(int i=0;i<columns;i++) {///header
-                            ShortTextView tv0 = getBaseSTV(context);
+                            final ShortTextView tv0 = getBaseSTV(context);
                             s=columnNames[i];
                             if(s.length()>6&&(s.substring(0,6).equals("quote("))) {
                                 Log.wtf("quotename",s);
                                 s=s.substring(6,s.length()-1);//shitty patch for quote(x) header
                             }
                             tv0.setShortenedText(s, headerLengthLimit);
+
+
                             tbrowh.addView(tv0);
                         }
                         sub.onNext(tbrowh);
@@ -340,6 +342,7 @@ public class QuerySelectViewActivity extends ActionBarActivity {
                                     tv0.setShortenedText(s, columnLengthLimit);
                                     tbrow0.addView(tv0);
                                 }
+
                                 setTableRowListeners(tbrow0);
                                 sub.onNext(tbrow0);
                                 //try{Thread.sleep(10);}catch (Exception e){sub.onError(e);}
@@ -360,11 +363,7 @@ public class QuerySelectViewActivity extends ActionBarActivity {
             @Override
             public void onStart() {
                 request(1);
-                progressPopup=new ProgressDialog(getContext());
-                progressPopup.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-                progressPopup.setIndeterminate(false);
-                progressPopup.setCancelable(false);
-                progressPopup.setMessage(getString(R.string.QuerySelectViewActivity_loading_message));
+                progressPopup=ViewUtils.getSettedCancelableProgressDialog(QuerySelectViewActivity.this,getString(R.string.QuerySelectViewActivity_loading_message));
                 progressPopup.show();
             }
 
@@ -388,9 +387,9 @@ public class QuerySelectViewActivity extends ActionBarActivity {
 
             @Override
             public void onCompleted() {
-                Log.d("end","end");
-                toolbar.setTitle(rowCount+" "+getString(R.string.QuerySelectViewActivity_title_results));
-                progressPopup.cancel();
+                Log.d("end", "end");
+                toolbar.setTitle(rowCount + " " + getString(R.string.QuerySelectViewActivity_title_results));
+                progressPopup.dismiss();
             }
 
             @Override

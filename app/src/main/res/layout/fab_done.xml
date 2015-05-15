@@ -5,7 +5,7 @@
     android:layout_height="wrap_content"
     android:layout_gravity="bottom|right"
     android:layout_margin="16dp"
-    android:src="@drawable/ic_fab_delete"
+    android:src="@drawable/ic_fab_done"
     fab:fab_colorNormal="@color/colorPrimary"
     fab:fab_colorPressed="@color/colorPrimaryDark"
     fab:fab_colorRipple="@color/colorPrimary"

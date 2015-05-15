@@ -1,10 +1,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools" tools:context="it.arduin.tables.QuerySelectViewActivity">
+
+    <item android:id="@+id/action_newQuery" android:title="@string/qryselectView_newQuery" android:icon="@drawable/ic_action_create"
+        android:orderInCategory="101" app:showAsAction="ifRoom" />
     <item android:id="@+id/action_newRecord" android:title="@string/qryselectView_newRecord" android:icon="@drawable/ic_action_add"
-        android:orderInCategory="101" app:showAsAction="ifRoom" />
-    <item android:id="@+id/action_newQuery" android:title="@string/qryselectView_newQuery" android:icon="@drawable/ic_action_content_create"
-        android:orderInCategory="100" app:showAsAction="ifRoom" />
+        android:orderInCategory="102" app:showAsAction="ifRoom" />
     <item android:id="@+id/action_refresh" android:title="@string/action_refresh" android:icon="@drawable/ic_action_refresh"
-        android:orderInCategory="101" app:showAsAction="ifRoom" />
+        android:orderInCategory="103" app:showAsAction="ifRoom" />
 </menu>

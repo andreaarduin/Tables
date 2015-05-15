@@ -57,4 +57,6 @@
     <string name="mainActivity_close_confirmation_title">Chiudere Tables?</string>
     <string name="DatabaseInfoActivity_delete_title">Conferma</string>
     <string name="DatabaseInfoActivity_delete_message">Sei sicuro di voler cancellare il database? L\' operazione non sarà annullabile</string>
+    <string name="DatabaseViewActivity_loading_message">Sto caricando le tabelle, attendi prego...</string>
+    <string name="mainActivity_loading_message">Carico i database, attendi prego</string>
 </resources>
