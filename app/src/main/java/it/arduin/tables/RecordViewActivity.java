@@ -30,12 +30,13 @@ import jp.wasabeef.recyclerview.animators.LandingAnimator;
 
 
 public class RecordViewActivity extends BaseProjectActivity {
-    Context c;
-    ArrayList<String> columnValues,columnNames;
-    int columns;
-    String table,path;
-    Boolean customQuery;
-    static int modified;
+    protected Context c;
+    protected ArrayList<String> columnValues,columnNames;
+    protected int columns;
+    protected String table,path;
+    protected Boolean customQuery;
+    protected int modified;
+    protected RecordViewPresenter mPresenter;
     @InjectView(R.id.toolbar) Toolbar toolbar;
     @InjectView(R.id.list) RecyclerView mRecyclerView;
     @InjectView(R.id.fab)
@@ -43,10 +44,10 @@ public class RecordViewActivity extends BaseProjectActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //Log.d("columns", "dfsa");
         setContentView(R.layout.activity_record_view);
         c=this;
         modified=0;
+        mPresenter = new RecordViewPresenter(this);
         //retrieve intent
         Intent intent=getIntent();
         columnValues=intent.getStringArrayListExtra("values");
@@ -76,14 +77,13 @@ public class RecordViewActivity extends BaseProjectActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                applyChanges();
-                finish();
+                mPresenter.onFabClick();
             }
         });
         fab.attachToRecyclerView(mRecyclerView);
     }
 
-    public static void onUserInput(Editable s){
+    public void onUserInput(Editable s){
         //Toast.makeText(c, s.toString(), Toast.LENGTH_SHORT).show();
         modified++;
     }
@@ -149,10 +149,7 @@ public class RecordViewActivity extends BaseProjectActivity {
             return true;
         }
         if(id == android.R.id.home){
-            if(modified>columns) applyChanges();
-            setResult(Activity.RESULT_OK, new Intent());
-            NavUtils.navigateUpTo(this, getIntent());
-            finish();
+            mPresenter.onExit();
             return true;
         }
         if (id == R.id.action_recordDelete) {
@@ -176,13 +173,9 @@ public class RecordViewActivity extends BaseProjectActivity {
         //Toast.makeText(c,sql,Toast.LENGTH_LONG).show();
        // Toast.makeText(c,sql,Toast.LENGTH_LONG).show();
         SQLiteDatabase db= SQLiteDatabase.openDatabase(path, null, SQLiteDatabase.CREATE_IF_NECESSARY);
-        Toast.makeText(c,"qry: "+sql,Toast.LENGTH_LONG).show();
-        Toast.makeText(c,"qry: "+sql,Toast.LENGTH_LONG).show();
         try{db.execSQL(sql);}
         catch(Exception e){Toast.makeText(c,e.getMessage(),Toast.LENGTH_LONG).show();}
         db.close();
-        setResult(Activity.RESULT_OK, new Intent());
-        NavUtils.navigateUpTo(this, getIntent());
-        finish();
+        mPresenter.onExit();
     }
 }

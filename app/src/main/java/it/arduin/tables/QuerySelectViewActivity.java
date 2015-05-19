@@ -1,23 +1,14 @@
 package it.arduin.tables;
 
-import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
-import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Color;
-import android.graphics.drawable.RippleDrawable;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.SystemClock;
 import android.support.v4.app.NavUtils;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -30,41 +21,35 @@ import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.balysv.materialripple.MaterialRippleLayout;
 import com.melnykov.fab.ObservableScrollView;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.logging.LogRecord;
-
-import butterknife.ButterKnife;
 import butterknife.InjectView;
-import butterknife.OnClick;
 import rx.Observable;
 import rx.Subscriber;
 import rx.Subscription;
-import rx.android.lifecycle.LifecycleEvent;
-import rx.android.lifecycle.LifecycleObservable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
-import rx.android.app.RxActivity;
 
 import static android.database.sqlite.SQLiteDatabase.openDatabase;
 import static android.graphics.Color.BLACK;
 
 
 public class QuerySelectViewActivity extends BaseProjectActivity {
+    public static final int NEW_RECORD = 29;
+    public static final int VIEW_RECORD = 0;
     private String query;
-    private String table;
+    protected String table;
     private String title;
-    private int columns,rowCount;
+    protected int columns;
+    private int rowCount;
     private Intent intent;
-    private String[] columnNames;
-    private SQLiteDatabase db;
-    private String path;
-    private boolean customQuery;
+    protected String[] columnNames;
+    protected SQLiteDatabase db;
+    protected String path;
+    protected boolean customQuery;
     private final Context c=this;
     private ProgressDialog progressPopup;
+    protected QuerySelectViewPresenter mPresenter;
     @InjectView(R.id.scrollView1) ScrollView scrollview;
     @InjectView(R.id.toolbar) Toolbar toolbar;
     @InjectView(R.id.fab)  com.melnykov.fab.FloatingActionButton fab;
@@ -78,7 +63,7 @@ public class QuerySelectViewActivity extends BaseProjectActivity {
         path=intent.getStringExtra("path");
         customQuery=intent.getBooleanExtra("customQuery", true);
         query=intent.getStringExtra("query");
-
+        mPresenter = new QuerySelectViewPresenter(this);
         scrollview.post(new Runnable() {
             @Override public void run() {
                 scrollview.fullScroll(ScrollView.FOCUS_UP);///setta lo scroll all'inizio
@@ -98,12 +83,12 @@ public class QuerySelectViewActivity extends BaseProjectActivity {
        }
 
         fab.attachToScrollView((ObservableScrollView) findViewById(R.id.scrollView1));
-       /* fab.setOnClickListener(new View.OnClickListener() {
+        fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View arg0) {
-                openNewQueryView();
+                mPresenter.onFabClick();
             }
-        });*/
+        });
 
         loadQuery();
 
@@ -113,20 +98,7 @@ public class QuerySelectViewActivity extends BaseProjectActivity {
         return this;
     }
 
-    private void insertNewRecord(){
-
-        Intent intent =new Intent(getApplicationContext(),RecordAddActivity.class);
-        ArrayList<String> a=new ArrayList<>(Arrays.asList(columnNames));
-        intent.putStringArrayListExtra("names", a);
-        intent.putExtra("table", table);
-        intent.putExtra("path", path);
-        ArrayList<String> values= new ArrayList<>();
-        for(int i=0;i<columns;i++) values.add(a.get(i));
-        intent.putStringArrayListExtra("values", values);
-        startActivityForResult(intent, 29);
-    }
-
-    private void deleteRow(final View v){
+    private void showDeleteRecordAlert(final View v){
         if(customQuery) return;
         final TableRow tr=(TableRow) v;
         AlertDialog.Builder alert = new AlertDialog.Builder(QuerySelectViewActivity.this);
@@ -134,60 +106,29 @@ public class QuerySelectViewActivity extends BaseProjectActivity {
         alert.setMessage(getString(R.string.QuerySelectViewActivity_delete_message));
         alert.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
-                db = openDatabase(path, null, SQLiteDatabase.OPEN_READWRITE);
-                String sql = "DELETE FROM " + table + " WHERE ";
-                for (int i = 0; i < columns; i++) {
-                    TextView t = (TextView) tr.getChildAt(i);
-                    String text = t.getText().toString();
-                    sql = sql + columnNames[i] + "='" + text + "' AND ";
-                }
-
-                sql = sql.replace("=null", " is null");
-                //sql = sql.replace("=''", " is null");
-                sql=sql.substring(0,sql.lastIndexOf("AND"));
-                Toast.makeText(c, sql, Toast.LENGTH_LONG).show();
-                try{
-                    db.execSQL(sql);
-                    TableLayout stk = (TableLayout) findViewById(R.id.table_main);
-                    stk.removeView(v);}
-                catch(Exception e){Toast.makeText(c, getString(R.string.QuerySelectViewActivity_error_delete_record_message)+" "+e.getMessage(), Toast.LENGTH_LONG).show();}
-                db.close();
+                mPresenter.deleteRow(tr,v);
             }
 
         });
         alert.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
-                return;
+
             }
         });
         alert.show();
     }
 
-    @OnClick(R.id.fab)
-    protected void openNewQueryView(){
+
+    protected void showCustomQueryAlert(){
         AlertDialog.Builder alert = new AlertDialog.Builder(QuerySelectViewActivity.this);
-
         alert.setTitle(getString(R.string.QuerySelectViewActivity_insert_query_message));
-
         // Set an EditText view to get user input
         final EditText input = new EditText(QuerySelectViewActivity.this);
         input.setText(query);
         alert.setView(input);
-
         alert.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
-
-                Intent intent = new Intent(QuerySelectViewActivity.this, QuerySelectViewActivity.class);
-                intent.putExtra("query", input.getText().toString());
-                intent.putExtra("table", "Query: "+input.getText().toString());
-                intent.putExtra("customQuery",true);
-                intent.putExtra("path", path);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
-                        | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS
-                        | Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
-                startActivity(intent);
-                // query=input.getText().toString();
-                //initTable();
+                mPresenter.openCustomQuery(input);
             }
         });
         alert.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
@@ -225,16 +166,16 @@ public class QuerySelectViewActivity extends BaseProjectActivity {
         int id = item.getItemId();
 
         if(id == R.id.action_newRecord){
-            insertNewRecord();
+            mPresenter.openNewRecordActivity();
             return true;
         }
         if (id == R.id.action_newQuery) {
-            openNewQueryView();
+            mPresenter.onCustomQueryAction();
             return true;
         }
         if (id == R.id.action_refresh) {
             //new LoadQueryTask(path,query,table,customQuery,this,this).execute();
-            loadQuery();
+            mPresenter.onRefreshAction();
             return true;
         }
         if(id == android.R.id.home){
@@ -261,21 +202,7 @@ public class QuerySelectViewActivity extends BaseProjectActivity {
         tbrow0.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(final View v) {
-                Intent intent=new Intent(QuerySelectViewActivity.this,RecordViewActivity.class);
-                intent.putExtra("customQuery",customQuery);
-                Log.d("columnNames", "" + columnNames.length);
-                intent.putStringArrayListExtra("names", new ArrayList<>(Arrays.asList(columnNames)));
-                intent.putExtra("table", table);
-                intent.putExtra("path", path);
-                ArrayList<String> values = new ArrayList<String>();
-                for (int i = 0; i < columns; i++) {
-                    ShortTextView t = (ShortTextView) ((TableRow) v).getChildAt(i);
-                    String text = t.getText();
-                    //text=text.substring(1,t.length());
-                    values.add(text);
-                }
-                intent.putExtra("values", values);
-                startActivityForResult(intent, 0);
+                mPresenter.onRowClick(v);
             }
 
         });
@@ -283,7 +210,7 @@ public class QuerySelectViewActivity extends BaseProjectActivity {
         if(!customQuery) tbrow0.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                deleteRow(v);
+                showDeleteRecordAlert(v);
                 return true;
 
             }
@@ -399,7 +326,7 @@ public class QuerySelectViewActivity extends BaseProjectActivity {
         };
     }
 
-    private void loadQuery(){
+    protected void loadQuery(){
         stk.removeAllViews();
         Observable<TableRow> myObservable = getTableObservable();
         Subscriber<TableRow> mySubscriber = getTableSubscriber();
@@ -408,4 +335,6 @@ public class QuerySelectViewActivity extends BaseProjectActivity {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(mySubscriber);
     }
+
+
 }

@@ -50,13 +50,6 @@
                 android:value="it.arduin.tables.QuerySelectViewActivity" />
         </activity>
         <activity
-            android:name=".CustomRecordViewActivity"
-            android:parentActivityName=".QuerySelectViewActivity" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="it.arduin.tables.QuerySelectViewActivity" />
-        </activity>
-        <activity
             android:name=".RecordAddActivity"
             android:label="@string/title_activity_record_add"
             android:parentActivityName=".QuerySelectViewActivity" >

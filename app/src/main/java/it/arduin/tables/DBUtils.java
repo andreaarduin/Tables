@@ -49,7 +49,21 @@ public class DBUtils {
         return list;
     }
 
-
+    public void deleteRecord(DatabaseHolder dbh,String table,ArrayList<String> columnNames,ArrayList<String> columnValues){
+        String sql = "DELETE FROM " + table + " WHERE ";
+        int columns=columnNames.size();
+        for (int i = 0; i < columns; i++)
+            sql = sql + columnNames.get(i) + "='" + columnValues.get(i) + "' AND ";
+        sql = sql.replace("=null", " is null");
+        //sql = sql.replace("=''", " is null");
+        sql=sql.substring(0,sql.lastIndexOf("AND"));
+        //Toast.makeText(c,sql,Toast.LENGTH_LONG).show();
+        // Toast.makeText(c,sql,Toast.LENGTH_LONG).show();
+        SQLiteDatabase db= SQLiteDatabase.openDatabase(dbh.getPath(), null, SQLiteDatabase.CREATE_IF_NECESSARY);
+        try{db.execSQL(sql);}
+        catch(Exception e){throw e;}
+        db.close();
+    }
 
     public static ArrayList<ColumnPair> getColumns(String path,String tableName){
         SQLiteDatabase db=null;

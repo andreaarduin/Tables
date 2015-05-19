@@ -18,12 +18,12 @@ import java.util.ArrayList;
 public class RecordViewListAdapter extends RecyclerView.Adapter<RecordViewListAdapter.ViewHolder> {
 
     private ArrayList<String> columnList,valuesList;
-    private Context c;
+    private RecordViewActivity instance;
 
-    public RecordViewListAdapter(ArrayList<String> columnList,ArrayList<String> valuesList, Context c) {
+    public RecordViewListAdapter(ArrayList<String> columnList,ArrayList<String> valuesList,RecordViewActivity a) {
         this.columnList = columnList;
         this.valuesList = valuesList;
-        this.c=c;
+        instance=a;
     }
 
     @Override
@@ -49,7 +49,7 @@ public class RecordViewListAdapter extends RecyclerView.Adapter<RecordViewListAd
         return new ViewHolder(itemView);
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder {
         public TextView name;
         public EditText label;
         public ViewHolder(View v){
@@ -58,7 +58,7 @@ public class RecordViewListAdapter extends RecyclerView.Adapter<RecordViewListAd
             label=(EditText) v.findViewById(R.id.columnValue);
             label.addTextChangedListener(new TextWatcher() {
                 public void afterTextChanged(Editable s) {
-                    RecordViewActivity.onUserInput(s);
+                    instance.onUserInput(s);
                 }
 
                 public void beforeTextChanged(CharSequence s, int start, int count, int after) {
