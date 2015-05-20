@@ -1,6 +1,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools" tools:context="it.arduin.tables.QuerySelectViewActivity">
+    xmlns:tools="http://schemas.android.com/tools" tools:context="it.arduin.tables.view.activity.QuerySelectViewActivity">
 
     <item android:id="@+id/action_newQuery" android:title="@string/qryselectView_newQuery" android:icon="@drawable/ic_action_create"
         android:orderInCategory="101" app:showAsAction="ifRoom" />
