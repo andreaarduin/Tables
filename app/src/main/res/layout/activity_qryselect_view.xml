@@ -9,10 +9,14 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:foreground="@drawable/bottom_shadow"
 
         >
-
+        <View
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:id="@+id/shadow"
+            android:background="@drawable/bottom_shadow"
+            />
 
         <com.melnykov.fab.ObservableScrollView
             android:id="@+id/scrollView1"

@@ -2,31 +2,49 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/c"
     android:orientation="vertical">
 
-    <include layout="@layout/toolbar"
+    <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
-        />
-
-    <EditText
-        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/tableName"
-        android:hint="nome tabella"
-        android:inputType="text"/>
+        android:layout_width="match_parent"
+        android:background="@color/colorPrimary"
+        app:theme="@style/AppBaseTheme.toolbarTheme"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto" >
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/tableName"
+            android:gravity="center"
+            android:background="@color/colorPrimary"
+            android:hint="@string/CreateTableActivity_table_name_hint"
+            android:textColorHint="#FFF"
+            android:textColor="#FFF"
+            android:padding="@dimen/medium_padding"
+            android:inputType="text"/>
+
+    </android.support.v7.widget.Toolbar>
+
+
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:foreground="@drawable/bottom_shadow"
         >
-
+        <View
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:id="@+id/shadow"
+            android:background="@drawable/bottom_shadow"
+            />
         <android.support.v7.widget.RecyclerView
             android:id="@+id/list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:context=".MainActivity"
             />
 
         <include layout="@layout/fab_add" android:src="@drawable/ic_action_add"/>
     </FrameLayout>
+
 </LinearLayout>

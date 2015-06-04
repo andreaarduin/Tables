@@ -33,10 +33,10 @@
     <string name="yes">Sì</string>
     <string name="error">Errore</string>
     <string name="QuerySelectViewActivity_delete_message">Sei sicuro di voler cancellare il record?</string>
-    <string name="DatabaseViewActivity_refresh_message">Le tabelle potrebbero essere cambiate. Vuoi ricaricarle?</string>
+    <string name="DatabaseViewActivity_refresh_message">Le tabelle potrebbero essere cambiate, è consigliato ricaricarle</string>
     <string name="QuerySelectViewActivity_error_delete_record_message">Impossibile cancellare il record</string>
     <string name="QuerySelectViewActivity_insert_query_message">Inserisci la query</string>
-    <string name="QuerySelectViewActivity_loading_message">Sto caricando, attendi...</string>
+    <string name="QuerySelectViewActivity_loading_message">Sto caricando, attendi…</string>
     <string name="QuerySelectViewActivity_refresh_old_data_message">I dati potrebbero essere cambiati, è consigliato ricaricarli</string>
     <string name="QuerySelectViewActivity_title_results">risultati</string>
     <string name="RecordAddActivity_error_message">Impossibile aggiungere il record, riprova</string>
@@ -54,9 +54,21 @@
     <string name="DatabaseViewInfoActivity_lastedit">Ultima modifica</string>
     <string name="DatabaseViewInfoActivity_tables">Tabelle</string>
     <string name="mainActivity_close_confirmation_message">Sei sicuro di voler uscire da Tables?</string>
-    <string name="mainActivity_close_confirmation_title">Chiudere Tables?</string>
+    <string name="mainActivity_close_confirmation_title">Uscita</string>
     <string name="DatabaseInfoActivity_delete_title">Conferma</string>
     <string name="DatabaseInfoActivity_delete_message">Sei sicuro di voler cancellare il database? L\' operazione non sarà annullabile</string>
-    <string name="DatabaseViewActivity_loading_message">Sto caricando le tabelle, attendi prego...</string>
+    <string name="DatabaseViewActivity_loading_message">Sto caricando le tabelle, attendi prego…</string>
     <string name="mainActivity_loading_message">Carico i database, attendi prego</string>
+    <string name="DatabaseViewActivity_refresh">Aggiorna</string>
+    <string name="DatabaseViewActivity_info">Info</string>
+    <string name="AI">AutoInc</string>
+    <string name="CreateTableActivity_table_name_hint">Scrivi qui il nome della tabella</string>
+    <string name="DatabaseViewActivity_action_select_query">Nuova query \'select\'</string>
+    <string name="DatabaseViewActivity_action_query">Nuova query</string>
+    <string name="DatabaseViewActivity_new_query_message">Scrivi qui il comando SQLite</string>
+    <string name="DatabaseViewActivity_new_query_title">Nuova query</string>
+    <string name="DatabaseViewActivity_new_query_failure">Errore!</string>
+    <string name="DatabaseViewActivity_new_query_success">Sembra che la query sia stata eseguita con successo! E\' consigliabile ricaricare le tabelle</string>
+    <string name="DatabaseViewActivity_new_select_query_message">Scrivi qui una query che restituisce valori (per esempio SELECT)</string>
+    <string name="DatabaseViewActivity_new_select_query_title">Nuova query di tipo select</string>
 </resources>

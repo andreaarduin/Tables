@@ -12,7 +12,7 @@ import jp.wasabeef.recyclerview.animators.OvershootInRightAnimator;
  * Created by a on 30/04/2015.
  */
 public class ViewUtils {
-    public static Toolbar getSettedToolbar(ActionBarActivity a,int resId){
+    public static Toolbar getSettedToolbar(BaseProjectActivity a,int resId){
         Toolbar toolbar=(Toolbar) a.findViewById(resId);
         if (toolbar != null) {
             a.setSupportActionBar(toolbar);

@@ -34,4 +34,7 @@
         <item name="colorControlActivated">@color/colorPrimary</item>
         <item name="colorControlHighlight">@color/colorPrimary</item>
     </style>
-</resources>
+    <style name="AppBaseTheme.toolbarTheme" parent="AppTheme">
+        <item name="android:textColorPrimary">@color/abc_primary_text_material_dark</item>
+    </style>
+    </resources>

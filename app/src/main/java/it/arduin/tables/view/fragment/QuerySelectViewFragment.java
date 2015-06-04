@@ -1,6 +1,6 @@
-package it.arduin.tables.view.activity;
+package it.arduin.tables.view.fragment;
 
-import android.support.v7.app.AlertDialog;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -8,12 +8,12 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.support.v4.app.NavUtils;
+import android.app.Fragment;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ScrollView;
 import android.widget.TableLayout;
@@ -22,23 +22,31 @@ import android.widget.Toast;
 
 import com.melnykov.fab.ObservableScrollView;
 
+import butterknife.ButterKnife;
 import butterknife.InjectView;
 import it.arduin.tables.R;
-import it.arduin.tables.presenter.QuerySelectViewPresenterImpl;
-import it.arduin.tables.utils.ViewUtils;
+import it.arduin.tables.view.activity.SelectViewActivity;
 import it.arduin.tables.presenter.QuerySelectViewPresenter;
+import it.arduin.tables.presenter.QuerySelectViewPresenterFragImpl;
+import it.arduin.tables.utils.ViewUtils;
 import it.arduin.tables.view.ShortenedTextView;
+import it.arduin.tables.view.activity.BaseProjectActivity;
+import it.arduin.tables.view.activity.SettingsActivity;
 import rx.Observable;
 import rx.Subscriber;
 import rx.Subscription;
+import rx.android.app.AppObservable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-import static android.database.sqlite.SQLiteDatabase.openDatabase;
 import static android.graphics.Color.BLACK;
 
-
-public class QuerySelectViewActivity extends BaseProjectActivity {
+/**
+ * A simple {@link Fragment} subclass.
+ * Use the {@link QuerySelectViewFragment#newInstance} factory method to
+ * create an instance of this fragment.
+ */
+public class QuerySelectViewFragment extends BaseProjectFragment {
     public static final int NEW_RECORD = 29;
     public static final int VIEW_RECORD = 0;
     private String query;
@@ -51,24 +59,66 @@ public class QuerySelectViewActivity extends BaseProjectActivity {
     public SQLiteDatabase db;
     public String path;
     public boolean customQuery;
-    private final Context c=this;
     private ProgressDialog progressPopup;
     protected QuerySelectViewPresenter mPresenter;
+    private Subscription mySubscription;
+    Observable<TableRow> myObservable;
     @InjectView(R.id.scrollView1) ScrollView scrollview;
     @InjectView(R.id.toolbar) Toolbar toolbar;
-    @InjectView(R.id.fab)  com.melnykov.fab.FloatingActionButton fab;
-    @InjectView(R.id.table_main)
-    public TableLayout stk;
+    @InjectView(R.id.fab) com.melnykov.fab.FloatingActionButton fab;
+    @InjectView(R.id.table_main) public TableLayout stk;
+    private Subscriber<TableRow> mySubscriber;
+
+    /**
+     * Use this factory method to create a new instance of
+     * this fragment using the provided parameters.
+     *
+     * @return A new instance of fragment QuerySelectViewFragment.
+     */
+    public static QuerySelectViewFragment newInstance(String path, String table,String query,boolean customQuery) {
+        QuerySelectViewFragment fragment = new QuerySelectViewFragment();
+        Bundle args = new Bundle();
+        args.putString("path", path);
+        args.putString("table", table);
+        args.putString("query", query);
+        args.putBoolean("customQuery", customQuery);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    public QuerySelectViewFragment() {
+        // Required empty public constructor
+    }
+    //fetch args
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_qryselect_view);
-        intent=getIntent();
-        table=intent.getStringExtra("table");
-        path=intent.getStringExtra("path");
-        customQuery=intent.getBooleanExtra("customQuery", true);
-        query=intent.getStringExtra("query");
-        mPresenter = new QuerySelectViewPresenterImpl(this);
+        setRetainInstance(true);
+        Bundle args = getArguments();
+        if (args != null) {
+            path=args.getString("path");
+            table=args.getString("table");
+            query=args.getString("query");
+            customQuery=args.getBoolean("customQuery");
+        }
+        myObservable = AppObservable.bindFragment(this, getTableObservable()).cache();
+        //myObservable = getTableObservable();
+        mySubscriber = getTableSubscriber();
+        mPresenter = new QuerySelectViewPresenterFragImpl(this);
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        View v =  inflater.inflate(R.layout.fragment_query_select_view, container, false);
+        ButterKnife.inject(this,v);
+        return v;
+    }
+
+    @Override
+    public void onViewCreated(View view,Bundle savedInstanceState){
+        super.onViewCreated(view,savedInstanceState);
         scrollview.post(new Runnable() {
             @Override public void run() {
                 scrollview.fullScroll(ScrollView.FOCUS_UP);///setta lo scroll all'inizio
@@ -76,18 +126,18 @@ public class QuerySelectViewActivity extends BaseProjectActivity {
         });
         //toolbar settings------------------------------------------------------
 
-        if (toolbar != null) setSupportActionBar(toolbar);
+        if (toolbar != null) getCastActivity().setSupportActionBar(toolbar);
         //toolbar.setLogo(getResources().getDrawable(R.drawable.ic_dblogo));
-        try{ setSupportActionBar(toolbar);
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        try{ getCastActivity().setSupportActionBar(toolbar);
+            getCastActivity().getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             toolbar.setTitleTextColor(0xFFFFFFFF);
             toolbar.setTitle("");
         }
         catch(Exception e){
-            Toast.makeText(this,e.toString(),Toast.LENGTH_LONG).show();
+            Toast.makeText(getContext(), e.toString(), Toast.LENGTH_LONG).show();
         }
 
-        fab.attachToScrollView((ObservableScrollView) findViewById(R.id.scrollView1));
+        fab.attachToScrollView((ObservableScrollView) rootView.findViewById(R.id.scrollView1));
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View arg0) {
@@ -95,98 +145,16 @@ public class QuerySelectViewActivity extends BaseProjectActivity {
             }
         });
         loadQuery();
-
     }
 
-
-    private void showDeleteRecordAlert(final View v){
-        if(customQuery) return;
-        final TableRow tr=(TableRow) v;
-        AlertDialog.Builder alert = new AlertDialog.Builder(QuerySelectViewActivity.this);
-        alert.setTitle(getString(R.string.action_confirm));
-        alert.setMessage(getString(R.string.QuerySelectViewActivity_delete_message));
-        alert.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                mPresenter.deleteRow(tr,v);
-            }
-
-        });
-        alert.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-
-            }
-        });
-        alert.show();
-    }
-
-
-    public void showCustomQueryAlert(){
-        AlertDialog.Builder alert = new AlertDialog.Builder(QuerySelectViewActivity.this);
-        alert.setTitle(getString(R.string.QuerySelectViewActivity_insert_query_message));
-        // Set an EditText view to get user input
-        final EditText input = new EditText(QuerySelectViewActivity.this);
-        input.setText(query);
-        alert.setView(input);
-        alert.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                mPresenter.openCustomQuery(input);
-            }
-        });
-        alert.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                // Canceled.
-            }
-        });
-        alert.show();
-    }
-
-
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Toast.makeText(this, getString(R.string.QuerySelectViewActivity_refresh_old_data_message), Toast.LENGTH_LONG).show();
-    }
-
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_qryselect_view, menu);
-        if(menu != null && customQuery){
-            MenuItem item_up = menu.findItem(R.id.action_newRecord);
-            item_up.setVisible(false);
-        }
-        return true;
+    public SelectViewActivity getCastActivity(){
+        return (SelectViewActivity) getActivity();
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+    public void onActivityCreated(Bundle savedInstanceState){
+        super.onActivityCreated(savedInstanceState);
 
-        if(id == R.id.action_newRecord){
-            mPresenter.openNewRecordActivity();
-            return true;
-        }
-        if (id == R.id.action_newQuery) {
-            mPresenter.onCustomQueryAction();
-            return true;
-        }
-        if (id == R.id.action_refresh) {
-            //new LoadQueryTask(path,query,table,customQuery,this,this).execute();
-            mPresenter.onRefreshAction();
-            return true;
-        }
-        if(id == android.R.id.home){
-            NavUtils.navigateUpTo(this,intent);
-            finish();
-            return true;
-        }
-
-
-        return super.onOptionsItemSelected(item);
     }
 
     private ShortenedTextView getBaseSTV(Context context){
@@ -234,7 +202,7 @@ public class QuerySelectViewActivity extends BaseProjectActivity {
                         columnNames = c.getColumnNames();
                         rowCount=c.getCount();
                         final int rc=rowCount;
-                        runOnUiThread(new Runnable() {
+                        getActivity().runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
                                 progressPopup.setMax(rc);
@@ -291,7 +259,7 @@ public class QuerySelectViewActivity extends BaseProjectActivity {
             @Override
             public void onStart() {
                 request(1);
-                progressPopup= ViewUtils.getSettedCancelableProgressDialog(QuerySelectViewActivity.this, getString(R.string.QuerySelectViewActivity_loading_message));
+                progressPopup= ViewUtils.getSettedCancelableProgressDialog((BaseProjectActivity) getActivity(), getString(R.string.QuerySelectViewActivity_loading_message));
                 progressPopup.show();
             }
 
@@ -322,19 +290,67 @@ public class QuerySelectViewActivity extends BaseProjectActivity {
 
             @Override
             public void onError(Throwable e) {
-                Log.d("error",e.getMessage());
+                Log.d("error"," "+e.getMessage());
             }
         };
     }
 
-    public void loadQuery(){
+    public synchronized void loadQuery(){
         stk.removeAllViews();
-        Observable<TableRow> myObservable = getTableObservable();
-        Subscriber<TableRow> mySubscriber = getTableSubscriber();
-        Subscription mySubscription = myObservable.onBackpressureBuffer()
+        mySubscription = myObservable.onBackpressureBuffer()
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(mySubscriber);
+    }
+
+    @Override
+    public void onDestroy(){
+        super.onDestroy();
+        mySubscription.unsubscribe();
+        if(progressPopup!=null) progressPopup.dismiss();
+        progressPopup=null;
+    }
+
+
+    private void showDeleteRecordAlert(final View v){
+        if(customQuery) return;
+        final TableRow tr=(TableRow) v;
+        AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
+        alert.setTitle(getString(R.string.action_confirm));
+        alert.setMessage(getString(R.string.QuerySelectViewActivity_delete_message));
+        alert.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                mPresenter.deleteRow(tr,v);
+            }
+
+        });
+        alert.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+
+            }
+        });
+        alert.show();
+    }
+
+
+    public void showCustomQueryAlert(){
+        AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
+        alert.setTitle(getString(R.string.QuerySelectViewActivity_insert_query_message));
+        // Set an EditText view to get user input
+        final EditText input = new EditText(getActivity());
+        input.setText(query);
+        alert.setView(input);
+        alert.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                mPresenter.openCustomQuery(input);
+            }
+        });
+        alert.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                // Canceled.
+            }
+        });
+        alert.show();
     }
 
 

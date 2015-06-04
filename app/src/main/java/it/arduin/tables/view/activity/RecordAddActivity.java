@@ -2,18 +2,13 @@ package it.arduin.tables.view.activity;
 
 import android.content.Context;
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.support.v4.app.NavUtils;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.melnykov.fab.FloatingActionButton;
@@ -23,6 +18,7 @@ import java.util.ArrayList;
 import butterknife.InjectView;
 import it.arduin.tables.R;
 import it.arduin.tables.presenter.RecordAddPresenter;
+import it.arduin.tables.presenter.RecordAddPresenterImpl;
 import it.arduin.tables.view.adapter.RecordAddListAdapter;
 import jp.wasabeef.recyclerview.animators.LandingAnimator;
 
@@ -44,7 +40,7 @@ public class RecordAddActivity extends BaseProjectActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_record_add);
         c=this;
-        mPresenter = new RecordAddPresenter(this);
+        mPresenter = new RecordAddPresenterImpl(this);
         //retrieve intent
         intent=getIntent();
         columnValues=intent.getStringArrayListExtra("values");

@@ -12,7 +12,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:theme="@style/PreferenceTheme"
-        android:foreground="@drawable/bottom_shadow"
+        />
+    <View
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:id="@+id/shadow"
+        android:background="@drawable/bottom_shadow"
         />
 
 </LinearLayout>

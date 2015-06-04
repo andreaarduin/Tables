@@ -70,7 +70,7 @@ public class ColumnSettingsAdapter extends RecyclerView.Adapter<ColumnSettingsAd
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        public EditText name;
+        public EditText name,def;
         public Spinner type;
         public Switch ai,pk,nn,un;
         public ViewHolder(View v) {
@@ -81,6 +81,7 @@ public class ColumnSettingsAdapter extends RecyclerView.Adapter<ColumnSettingsAd
             pk = (Switch) v.findViewById(R.id.primarykey);
             nn = (Switch) v.findViewById(R.id.notnull);
             un = (Switch) v.findViewById(R.id.unique);
+            def = (EditText) v.findViewById(R.id.def_value);
         }
     }
 }

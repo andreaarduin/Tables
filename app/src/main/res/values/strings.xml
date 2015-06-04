@@ -2,7 +2,6 @@
 <resources>
 
     <string name="app_name">Tables</string>
-    <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="action_about">About</string>
     <string name="title_activity_database_view">DatabaseView</string>
@@ -46,11 +45,11 @@
     <string name="DatabaseViewActivity_view_pragma">View table structure</string>
     <string name="DatabaseViewActivity_rename_table">Rename table</string>
     <string name="DatabaseViewActivity_delete_table_message">Are you sure you want to delete the table </string>
-    <string name="DatabaseViewActivity_info">info</string>
+    <string name="DatabaseViewActivity_info">Info</string>
     <string name="yes">Yes</string>
     <string name="DatabaseViewActivity_rename_table_message">Insert the new name</string>
     <string name="error">Error</string>
-    <string name="DatabaseViewActivity_refresh_message">Tables might have changed. Do you want to reload them?</string>
+    <string name="DatabaseViewActivity_refresh_message">Tables might have changed, it is advised to refresh them</string>
     <string name="QuerySelectViewActivity_delete_message">Are you sure you want to delete this record?</string>
     <string name="QuerySelectViewActivity_error_delete_record_message">Can\'t delete record</string>
     <string name="QuerySelectViewActivity_insert_query_message">Insert the query</string>
@@ -76,6 +75,33 @@
     <string name="mainActivity_add_db_new">New</string>
     <string name="DatabaseInfoActivity_delete_title">Confirm</string>
     <string name="DatabaseInfoActivity_delete_message">Are you sure you want to delete this database? The operation will not be cancelable</string>
-    <string name="DatabaseViewActivity_loading_message">Loading tables, please wait...</string>
-    <string name="mainActivity_loading_message">Loading databases, please wait...</string>
+    <string name="DatabaseViewActivity_loading_message">Loading tables, please wait…</string>
+    <string name="mainActivity_loading_message">Loading databases, please wait…</string>
+    <string name="DatabaseViewActivity_refresh">Refresh</string>
+    <string name="RowColumnSettings_type">Data type</string>
+    <string name="RowColumnSettings_notnull">Not null</string>
+    <string name="RowColumnSettings_name">Column Name</string>
+    <string name="RowColumnSettings_name_hint">name</string>
+    <string name="RowColumnSettings_autoinc">AutoInc</string>
+    <string name="RowColumnSettings_primarykey">Primary Key</string>
+    <string name="RowColumnSettings_unique">Unique</string>
+    <string name="CreateTableActivity_table_name_hint">Write here the table name</string>
+    <string name="RowColumnSettings_default_hint">default value</string>
+    <string name="RowColumnSettings_default">Default value</string>
+
+<!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_select_view">SelectViewActivity</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="DatabaseViewActivity_action_select_query">New select query</string>
+    <string name="DatabaseViewActivity_action_query">New query</string>
+    <string name="DatabaseViewActivity_new_query_message">Write here the SQLite command</string>
+    <string name="DatabaseViewActivity_new_query_title">New query</string>
+    <string name="DatabaseViewActivity_new_query_success">It appears the query executed correctly ! You might want to refresh the tables</string>
+    <string name="DatabaseViewActivity_new_query_failure">Error!</string>
+    <string name="DatabaseViewActivity_new_select_query_title">New select query</string>
+    <string name="DatabaseViewActivity_new_select_query_message">Write here a query that returns data (e.g. SELECT)</string>
+    <string name="CreateTableSettingsFragment_rowid_hint">Checked = with rowid</string>
+    <string name="title_activity_table_create">TableCreateActivity</string>
 </resources>

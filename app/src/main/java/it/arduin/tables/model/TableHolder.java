@@ -1,7 +1,11 @@
 package it.arduin.tables.model;
 
+import android.provider.ContactsContract;
+
 import java.util.ArrayList;
 import java.util.Arrays;
+
+import it.arduin.tables.utils.DBUtils;
 
 /**
  * Created by a on 15/12/2014.
@@ -19,6 +23,11 @@ public class TableHolder {
     public TableHolder(String name, String[] fields,DatabaseHolder parent) {
         this.name = name;
         this.fields = new ArrayList<>(Arrays.asList(fields));
+        this.parent=parent;
+    }
+    public TableHolder(String name,DatabaseHolder parent){
+        this.name = name;
+        this.fields = DBUtils.getColumnsString(parent.getPath(),name);
         this.parent=parent;
     }
 

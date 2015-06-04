@@ -1,6 +1,6 @@
 package it.arduin.tables.view.activity;
 
-import android.app.AlertDialog;
+import android.support.v7.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -20,8 +20,9 @@ import java.text.SimpleDateFormat;
 import butterknife.InjectView;
 import it.arduin.tables.model.DatabaseHolder;
 import it.arduin.tables.R;
-import it.arduin.tables.utils.ViewUtils;
 import it.arduin.tables.presenter.DatabaseInfoPresenter;
+import it.arduin.tables.utils.ViewUtils;
+import it.arduin.tables.presenter.DatabaseInfoPresenterImpl;
 import it.arduin.tables.view.adapter.SimpleTextAdapter;
 
 
@@ -50,7 +51,7 @@ public class DatabaseInfoActivity extends BaseProjectActivity {
         mAdapter = new SimpleTextAdapter();
         mRecyclerView.setAdapter(mAdapter);
         loadInfo();
-        mPresenter=new DatabaseInfoPresenter(this);
+        mPresenter=new DatabaseInfoPresenterImpl(this);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

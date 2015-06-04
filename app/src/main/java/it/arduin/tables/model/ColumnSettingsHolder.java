@@ -2,13 +2,11 @@ package it.arduin.tables.model;
 
 import it.arduin.tables.view.adapter.ColumnSettingsAdapter;
 
-/**
- * Created by a on 01/02/2015.
- */
 public class ColumnSettingsHolder {
     public String name;
     Boolean autoincrement;
     Boolean unique;
+    String defaultValue;
     public Boolean primaryKey;
     Boolean notNull;
     String type;
@@ -22,6 +20,7 @@ public class ColumnSettingsHolder {
         String definition=("`"+name+"` ");
         definition+=type;
         if(notNull) definition+=" NOT NULL ";
+        if(!defaultValue.equals("")) definition+=" DEFAULT "+"`"+defaultValue+"` "+" ";
         if(autoincrement) definition+=" AUTOINCREMENT ";
         if(unique) definition+=" UNIQUE ";
         return definition;
@@ -34,6 +33,7 @@ public class ColumnSettingsHolder {
         this.primaryKey=v.pk.isChecked();
         this.notNull=v.nn.isChecked();
         this.type=v.type.getSelectedItem().toString();
+        this.defaultValue = v.def.getText().toString();
     }
 
     public ColumnSettingsHolder(String type, String name) {

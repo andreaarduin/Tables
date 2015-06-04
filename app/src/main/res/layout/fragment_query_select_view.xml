@@ -1,0 +1,59 @@
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <include layout="@layout/toolbar"
+        android:id="@+id/toolbar"/>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:foreground="@drawable/bottom_shadow"
+
+        >
+
+
+        <com.melnykov.fab.ObservableScrollView
+            android:id="@+id/scrollView1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fillViewport="true"
+            android:background="@color/defaultwhite"
+            android:layout_gravity="center|top"
+            android:scrollbars="horizontal|vertical">
+
+            <HorizontalScrollView
+                android:id="@+id/hscrollView1"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:fillViewport="true"
+                android:layout_gravity="left"
+                android:background="@color/defaultwhite"
+                android:scrollbars="horizontal|vertical"
+                >
+
+                <TableLayout
+                    android:id="@+id/table_main"
+                    android:background="@android:color/transparent"
+                    android:collapseColumns="*"
+                    android:stretchColumns="*"
+                    android:scrollbars="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="bottom">
+
+                    <TableRow
+                        android:background="@drawable/flat_list_background">
+                    </TableRow>
+                </TableLayout>
+            </HorizontalScrollView>
+        </com.melnykov.fab.ObservableScrollView>
+
+
+        <include layout="@layout/fab_query"/>
+
+
+    </FrameLayout>
+
+</LinearLayout>

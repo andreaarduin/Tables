@@ -10,6 +10,7 @@ import android.os.Build;
 import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -23,6 +24,7 @@ import it.arduin.tables.R;
 import it.arduin.tables.model.ColumnPair;
 import it.arduin.tables.model.ColumnSettingsHolder;
 import it.arduin.tables.model.DatabaseHolder;
+import it.arduin.tables.model.TableStructure;
 
 /**
  * Created by a on 16/12/2014.
@@ -203,30 +205,42 @@ public class DBUtils {
         SQLiteDatabase db;
         Cursor c;
         ArrayList<String> list=new ArrayList<>();
-
         try {
-            //Toast.makeText(DatabaseView.c,path,Toast.LENGTH_LONG).show();
             db = SQLiteDatabase.openDatabase(path, null, SQLiteDatabase.CREATE_IF_NECESSARY);
             c = db.rawQuery("SELECT name FROM sqlite_master WHERE type = \"table\"", null);
         } catch (Exception e) {return list;}
-        try{
-            Cursor cursor=db.rawQuery("SELECT * from sqlite_master",null);
-            if(cursor.getCount()!=0) list.add("sqlite_master");
-        }
-        catch(Exception e){}
-        if(db==null) return list;
         if(c==null) return list;
         if (c.moveToFirst()) {
             c.moveToNext();
             while ( !c.isAfterLast() ) {
                 list.add(c.getString(0));
-                //Toast.makeText(DatabaseView.c,c.getString(0),Toast.LENGTH_LONG).show();
                 c.moveToNext();
             }
         }if(!c.isClosed()) c.close();
         if(db.isOpen()) db.close();
         return list;
     }
+
+    public static ArrayList<String> getIndexes(String path) {
+        SQLiteDatabase db;
+        Cursor c;
+        ArrayList<String> list=new ArrayList<>();
+        try {
+            db = SQLiteDatabase.openDatabase(path, null, SQLiteDatabase.CREATE_IF_NECESSARY);
+            c = db.rawQuery("SELECT name FROM sqlite_master WHERE type = \"index\"", null);
+        } catch (Exception e) {return list;}
+        if(c==null) return list;
+        if (c.moveToFirst()) {
+            c.moveToNext();
+            while ( !c.isAfterLast() ) {
+                list.add(c.getString(0));
+                c.moveToNext();
+            }
+        }if(!c.isClosed()) c.close();
+        if(db.isOpen()) db.close();
+        return list;
+    }
+
 
     public static void deleteRecord(String dbPath,String table,ArrayList<String> columnNames,ArrayList<String> columnValues) throws Exception{
         try{
@@ -259,6 +273,23 @@ public class DBUtils {
             do {
                 ColumnPair def=new ColumnPair(c.getString(1),c.getString(2));
                 p.add(def);
+                // Toast.makeText(DatabaseView.c,new Pair(c.getString(1),c.getString(2)).ToString(),Toast.LENGTH_SHORT).show();
+            } while (c.moveToNext());
+        }
+        if(!c.isClosed()) c.close();
+        return p;
+    }
+    public static ArrayList<String> getColumnsString(String path,String tableName){
+        SQLiteDatabase db=null;
+        try {
+            db = SQLiteDatabase.openDatabase(path, null, SQLiteDatabase.CREATE_IF_NECESSARY);
+        } catch (Exception e) {        }
+        ArrayList<String> p= new ArrayList<>();
+        if(db==null) return p;
+        Cursor c = db.rawQuery("PRAGMA table_info('" + tableName + "')", null);
+        if (c.moveToFirst()) {
+            do {
+                p.add(c.getString(1));
                 // Toast.makeText(DatabaseView.c,new Pair(c.getString(1),c.getString(2)).ToString(),Toast.LENGTH_SHORT).show();
             } while (c.moveToNext());
         }
@@ -309,6 +340,18 @@ public class DBUtils {
             }
             sql += ")";
             db.execSQL(sql);
+        }
+        catch (Exception e){
+            throw e;
+        }
+    }
+
+    public static void createTable(String path,TableStructure t){
+        try {
+            SQLiteDatabase db = SQLiteDatabase.openOrCreateDatabase(path,null);
+            String command = t.getCreateCommand();
+            Log.wtf("execSQL", command);
+            db.execSQL(command);
         }
         catch (Exception e){
             throw e;

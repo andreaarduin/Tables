@@ -1,6 +1,6 @@
 package it.arduin.tables.view.activity;
 
-import android.app.AlertDialog;
+import android.support.v7.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -25,6 +25,7 @@ import it.arduin.tables.model.DatabaseHolder;
 import it.arduin.tables.presenter.MainPresenter;
 import it.arduin.tables.R;
 import it.arduin.tables.model.SharedPreferencesOperations;
+import it.arduin.tables.presenter.MainPresenterImpl;
 import it.arduin.tables.utils.ViewUtils;
 import it.arduin.tables.view.adapter.MainActivityAdapter;
 import it.arduin.tables.view.RecyclerItemClickListener;
@@ -56,7 +57,7 @@ public class MainActivity extends BaseProjectActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         c=this;
-        mPresenter=new MainPresenter(this);
+        mPresenter=new MainPresenterImpl(this);
         prefs = new SharedPreferencesOperations(c);
         //---------------toolbar
         toolbar = ViewUtils.getSettedToolbar(this, R.id.toolbar);
@@ -313,6 +314,8 @@ public class MainActivity extends BaseProjectActivity {
 
 
     public void showAboutAlert() {
+        Intent i= new Intent(this, SelectViewActivity.class);
+        startActivity(i);
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
         alertDialogBuilder.setMessage("By Andrea Arduin");
         alertDialogBuilder.setTitle(c.getString(R.string.action_about));

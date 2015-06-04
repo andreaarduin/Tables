@@ -56,29 +56,7 @@ public class DatabaseHolder implements Parcelable {
     };
     //methods
     public ArrayList<String> getTables() {
-        SQLiteDatabase db;
-        Cursor c;
-        ArrayList<String> list=new ArrayList<>();
-        try {
-            db = SQLiteDatabase.openDatabase(path, null, SQLiteDatabase.CREATE_IF_NECESSARY);
-            c = db.rawQuery("SELECT name FROM sqlite_master WHERE type = \"table\"", null);
-        } catch (Exception e) {return list;}
-        /*try{
-            Cursor cursor=db.rawQuery("SELECT * from sqlite_master",null);
-            if(cursor.getCount()!=0) list.insert("sqlite_master");
-        }
-        catch(Exception e){return list;}*/
-        //if(db==null) return list;
-        if(c==null) return list;
-        if (c.moveToFirst()) {
-            c.moveToNext();
-            while ( !c.isAfterLast() ) {
-                list.add(c.getString(0));
-                c.moveToNext();
-            }
-        }if(!c.isClosed()) c.close();
-        if(db.isOpen()) db.close();
-        return list;
+        return DBUtils.getTables(path);
     }
 
     public boolean isAccessible(){
@@ -90,34 +68,15 @@ public class DatabaseHolder implements Parcelable {
             return false;
         }
     }
+
     public int getTableNumber(){
         return getTables().size();
     }
+
     public ArrayList<String> getIndexes() {
-        SQLiteDatabase db;
-        Cursor c;
-        ArrayList<String> list=new ArrayList<>();
-        try {
-            db = SQLiteDatabase.openDatabase(path, null, SQLiteDatabase.CREATE_IF_NECESSARY);
-            c = db.rawQuery("SELECT name FROM sqlite_master WHERE type = \"index\"", null);
-        } catch (Exception e) {return list;}
-        /*try{
-            Cursor cursor=db.rawQuery("SELECT * from sqlite_master",null);
-            if(cursor.getCount()!=0) list.insert("sqlite_master");
-        }
-        catch(Exception e){return list;}*/
-        //if(db==null) return list;
-        if(c==null) return list;
-        if (c.moveToFirst()) {
-            c.moveToNext();
-            while ( !c.isAfterLast() ) {
-                list.add(c.getString(0));
-                c.moveToNext();
-            }
-        }if(!c.isClosed()) c.close();
-        if(db.isOpen()) db.close();
-        return list;
+        return DBUtils.getIndexes(path);
     }
+
     public int getIndexNumber(){
         return getIndexes().size();
     }

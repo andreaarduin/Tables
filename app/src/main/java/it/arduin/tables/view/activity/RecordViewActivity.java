@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import butterknife.InjectView;
 import it.arduin.tables.R;
 import it.arduin.tables.presenter.RecordViewPresenter;
+import it.arduin.tables.presenter.RecordViewPresenterImpl;
 import it.arduin.tables.view.adapter.RecordViewListAdapter;
 import jp.wasabeef.recyclerview.animators.LandingAnimator;
 
@@ -47,7 +48,7 @@ public class RecordViewActivity extends BaseProjectActivity {
         setContentView(R.layout.activity_record_view);
         c=this;
         modified=0;
-        mPresenter = new RecordViewPresenter(this);
+        mPresenter = new RecordViewPresenterImpl(this);
         //retrieve intent
         Intent intent=getIntent();
         columnValues=intent.getStringArrayListExtra("values");
