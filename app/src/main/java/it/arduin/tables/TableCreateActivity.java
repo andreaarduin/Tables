@@ -1,44 +1,107 @@
 package it.arduin.tables;
 
-import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
+import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewPager;
 import android.os.Bundle;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.Toast;
+
+import java.util.ArrayList;
 
 import butterknife.InjectView;
-import it.arduin.tables.utils.ViewUtils;
-import it.arduin.tables.view.activity.BaseProjectActivity;
-import it.arduin.tables.view.fragment.CreateTableSettingsFragment;
+import butterknife.OnClick;
+import it.arduin.tables.model.ColumnSettingsHolder;
+import it.arduin.tables.model.DatabaseHolder;
+import it.arduin.tables.model.TableStructure;
+import it.arduin.tables.ui.view.activity.BaseProjectActivity;
+import it.arduin.tables.ui.view.adapter.ColumnSettingsAdapter;
+import it.arduin.tables.ui.view.adapter.CreateTableViewPagerAdapter;
+import it.arduin.tables.ui.view.fragment.CreateTableColumnsFragment;
+import it.arduin.tables.utils.DBUtils;
 
 public class TableCreateActivity extends BaseProjectActivity {
+    DatabaseHolder dbh;
     @InjectView(R.id.toolbar) Toolbar toolbar;
-    @InjectView(R.id.fab) com.melnykov.fab.FloatingActionButton fab;
+    @InjectView(R.id.container) ViewPager mViewPager;
+    CreateTableViewPagerAdapter mViewPagerAdapter;
+    @InjectView(R.id.toolbarContainer) LinearLayout toolbarContainer;
+    @InjectView(R.id.buttonNext) Button btnNext;
+    @InjectView(R.id.buttonPrev) Button btnPrev;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_table_create);
-        FragmentManager fragMan = getFragmentManager();
-        final FragmentTransaction fragTransaction = fragMan.beginTransaction();
+        dbh = getIntent().getParcelableExtra("db");
         if (toolbar != null) {
             setSupportActionBar(toolbar);
             toolbar.setTitleTextColor(0xFFFFFFFF);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
-
-        fab.setOnClickListener(new View.OnClickListener() {
+        /*fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Fragment myFrag = CreateTableSettingsFragment.newInstance();
-                fragTransaction.add(R.id.container, myFrag ,"f1");
-                fragTransaction.commit();
+                Snackbar.make(findViewById(R.id.rootView),"Fiko",Snackbar.LENGTH_LONG)
+                        .show();
             }
-        });
+        });*/
+        mViewPagerAdapter = new CreateTableViewPagerAdapter(getSupportFragmentManager());
+        mViewPager.setAdapter(mViewPagerAdapter);
+        mViewPager.setCurrentItem(0);
     }
 
+    @OnClick(R.id.buttonPrev)
+    public void goBack(){
+        mViewPager.setCurrentItem(mViewPager.getCurrentItem() - 1);
+        if((mViewPager.getCurrentItem()-1) == 0){
+            btnPrev.setClickable(false);
+            btnPrev.setText("");
+        }
+        else{
+            btnPrev.setClickable(true);
+            btnPrev.setText(getString(R.string.CreateTableActivity_previous));
+        }
+    }
+    @OnClick(R.id.buttonNext)
+    public void goFwd(){
+        Log.wtf("current", "" + mViewPager.getCurrentItem());
+        if((mViewPager.getCurrentItem()) == mViewPagerAdapter.getCount()-1){
+            onConfirm();
+        }
+        else if((mViewPager.getCurrentItem()) == mViewPagerAdapter.getCount()-2){
+            btnNext.setText(getString(R.string.CreateTableActivity_confirm));
+            mViewPager.setCurrentItem(mViewPager.getCurrentItem()+1);
+        }
+        else{
+            mViewPager.setCurrentItem(mViewPager.getCurrentItem()+1);
+            btnNext.setClickable(true);
+            btnNext.setText(getString(R.string.CreateTableActivity_next));
+        }
+    }
+
+    private void onConfirm() {
+        //TODO show a dialog and ask the user to confirm the creation or get back and make changes
+        Snackbar.make(findViewById(R.id.rootView),"Sad",Snackbar.LENGTH_LONG).show();
+        ArrayList<ColumnSettingsHolder> columns = new ArrayList<>();
+        ArrayList<ColumnSettingsHolder> primaryKeys = new ArrayList<>();
+        ArrayList<ColumnSettingsHolder> uniques = new ArrayList<>();
+        CreateTableColumnsFragment secondScreen = (CreateTableColumnsFragment) mViewPagerAdapter.getItem(1);
+        ArrayList<ColumnSettingsHolder> list = secondScreen.getColumns();
+        for (int i = 0; i <  list.size(); i++) {
+            ColumnSettingsHolder data = list.get(i);
+            if(data.primaryKey) primaryKeys.add(data);
+            if(data.getUnique()) uniques.add(data);
+            columns.add(data);
+        }
+        TableStructure t = new TableStructure("TODOtblname",columns,primaryKeys,uniques);
+        DBUtils.createTable(dbh.getPath(), t);
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -60,5 +123,9 @@ public class TableCreateActivity extends BaseProjectActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public LinearLayout getToolbarContainer(){
+        return toolbarContainer;
     }
 }

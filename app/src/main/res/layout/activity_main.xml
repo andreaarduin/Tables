@@ -1,33 +1,31 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<FrameLayout
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="wrap_content"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <include
-        layout="@layout/toolbar"
-        android:id="@+id/toolbar"
-        />
-
-
-    <FrameLayout
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        >
+        android:cacheColorHint="@android:color/transparent"
+        android:paddingTop="?attr/actionBarSize"
+        android:clipToPadding="false"
+        android:scrollbars="vertical" />
+    <include layout="@layout/fab_add"
+        android:src="@drawable/ic_action_add"
+        />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:orientation="vertical"
+        android:id="@+id/toolbarContainer"
+        android:layout_height="wrap_content">
+
+        <include layout="@layout/toolbar"/>
         <View
             android:layout_height="wrap_content"
             android:layout_width="match_parent"
             android:id="@+id/shadow"
             android:background="@drawable/bottom_shadow"
             />
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/list"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:minHeight="?attr/actionBarSize"
-            android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-            tools:context=".MainActivity"
-            />
-        <include layout="@layout/fab_add" />
-    </FrameLayout>
-</LinearLayout>
+    </LinearLayout>
+</FrameLayout>

@@ -1,13 +1,19 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    tools:context="it.arduin.tables.view.fragment.CreateTableSettingsFragment"
-    android:layout_margin="@dimen/smaller_padding"
+    tools:context="it.arduin.tables.ui.view.fragment.CreateTableSettingsFragment"
+    android:paddingTop="?attr/actionBarSize"
+    android:paddingBottom="?attr/actionBarSize"
     android:background="@drawable/card_selector"
     android:orientation="vertical">
-   <!-- <android.support.design.widget.TextInputLayout
+    <LinearLayout
+        android:orientation="vertical"
+        android:padding="@dimen/default_padding"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    <android.support.design.widget.TextInputLayout
         android:layout_height="wrap_content"
-        android:layout_width="match_parent">-->
+        android:layout_width="match_parent">
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -19,7 +25,7 @@
             android:enabled="true">
 
         </EditText>
-    <!--</android.support.design.widget.TextInputLayout>-->
+    </android.support.design.widget.TextInputLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -38,5 +44,5 @@
             android:id="@+id/rowid"/>
     </LinearLayout>
 
-
+    </LinearLayout>
 </LinearLayout>

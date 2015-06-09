@@ -18,13 +18,10 @@ package it.arduin.tables.utils;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
-import android.annotation.TargetApi;
-import android.os.Build;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.view.animation.LinearInterpolator;
 import android.widget.LinearLayout;
@@ -46,17 +43,13 @@ public final class RecyclerViewUtils {
         private View shadow;
         private State state;
 
-        public ShowHideToolbarOnScrollingListener(Toolbar toolbar,View shadow) {
-            this.toolbar = toolbar;
-            this.shadow=shadow;
-            this.state = new State();
-        }
 
         public ShowHideToolbarOnScrollingListener(LinearLayout toolbarContainer) {
             this.toolbarContainer=toolbarContainer;
             this.shadow=toolbarContainer.getChildAt(1);
             this.toolbar= (Toolbar) toolbarContainer.getChildAt(0);
             this.state = new State();
+            viewsAnimateShow(0);
         }
 
         private void toolbarSetElevation(float elevation) {
@@ -72,18 +65,34 @@ public final class RecyclerViewUtils {
             shadow.setVisibility(View.INVISIBLE);
         }
 
-        public void toolbarAnimateShow(final int verticalOffset) {
-            toolbar.animate()
+        public void viewsAnimateShow(final int verticalOffset) {
+            toolbarAnimateShow(verticalOffset);
+            shadowAnimateShow(verticalOffset);
+        }
+
+        private void shadowAnimateShow(int verticalOffset) {
+            shadow.animate()
                     .translationY(0)
                     .setInterpolator(new LinearInterpolator())
-                    .setDuration(120)
-                    .setListener(new AnimatorListenerAdapter() {
-                        @Override
-                        public void onAnimationStart(Animator animation) {
-                            toolbarSetElevation(verticalOffset == 0 ? 0 : TOOLBAR_ELEVATION);
-                        }
-                    });
+                    .setDuration(120);
+        }
+
+
+        private void viewsAnimateHide() {
+            toolbarAnimateHide();
+            shadowAnimateHide();
+        }
+
+        private void shadowAnimateHide() {
             shadow.animate()
+                    .translationY(-toolbar.getHeight())
+                    .setInterpolator(new LinearInterpolator())
+                    .setDuration(120);
+        }
+
+
+        public void toolbarAnimateShow(final int verticalOffset) {
+            toolbar.animate()
                     .translationY(0)
                     .setInterpolator(new LinearInterpolator())
                     .setDuration(120)
@@ -107,16 +116,7 @@ public final class RecyclerViewUtils {
                             toolbarSetElevation(0);
                         }
                     });
-            shadow.animate()
-                    .translationY(-toolbar.getHeight())
-                    .setInterpolator(new LinearInterpolator())
-                    .setDuration(120)
-                    .setListener(new AnimatorListenerAdapter() {
-                        @Override
-                        public void onAnimationEnd(Animator animation) {
-                            toolbarSetElevation(0);
-                        }
-                    });
+
         }
 
         @Override
@@ -124,15 +124,15 @@ public final class RecyclerViewUtils {
             if (newState == RecyclerView.SCROLL_STATE_IDLE) {
                 if (state.scrollingOffset > 0) {
                     if (state.verticalOffset > toolbar.getHeight()) {
-                        toolbarAnimateHide();
+                        viewsAnimateHide();
                     } else {
-                        toolbarAnimateShow(state.verticalOffset);
+                        viewsAnimateShow(state.verticalOffset);
                     }
                 } else if (state.scrollingOffset < 0) {
                     if (toolbar.getTranslationY() < toolbar.getHeight() * -0.6 && state.verticalOffset > toolbar.getHeight()) {
-                        toolbarAnimateHide();
+                        viewsAnimateHide();
                     } else {
-                        toolbarAnimateShow(state.verticalOffset);
+                        viewsAnimateShow(state.verticalOffset);
                     }
                 }
             }

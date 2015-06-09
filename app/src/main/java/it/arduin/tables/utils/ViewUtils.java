@@ -2,11 +2,10 @@ package it.arduin.tables.utils;
 
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 
-import it.arduin.tables.view.activity.BaseProjectActivity;
-import jp.wasabeef.recyclerview.animators.OvershootInRightAnimator;
+import it.arduin.tables.ui.view.activity.BaseProjectActivity;
+import jp.wasabeef.recyclerview.animators.*;
 
 /**
  * Created by a on 30/04/2015.
@@ -43,9 +42,9 @@ public class ViewUtils {
         return progressDialog;
     }
     public static void setRecyclerViewAnimator(android.support.v7.widget.RecyclerView r){
-        r.setItemAnimator(new OvershootInRightAnimator());
-        r.getItemAnimator().setAddDuration(600);
-        r.getItemAnimator().setRemoveDuration(600);
+        r.setItemAnimator(new SlideInLeftAnimator());
+        r.getItemAnimator().setAddDuration(500);
+        r.getItemAnimator().setRemoveDuration(500);
     }
 
 

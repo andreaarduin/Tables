@@ -104,4 +104,8 @@
     <string name="DatabaseViewActivity_new_select_query_message">Write here a query that returns data (e.g. SELECT)</string>
     <string name="CreateTableSettingsFragment_rowid_hint">Checked = with rowid</string>
     <string name="title_activity_table_create">TableCreateActivity</string>
+    <string name="CreateTableActivity_next">Next</string>
+    <string name="CreateTableActivity_previous">Previous</string>
+    <string name="CreateTableActivity_add">Add</string>
+    <string name="CreateTableActivity_confirm">Confirm</string>
 </resources>

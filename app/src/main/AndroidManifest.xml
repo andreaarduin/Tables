@@ -14,7 +14,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name=".view.activity.MainActivity"
+            android:name=".ui.view.activity.MainActivity"
             android:label="@string/app_name"
             android:launchMode="singleTop" >
             <intent-filter>
@@ -24,63 +24,63 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".view.activity.DatabaseViewActivity"
+            android:name=".ui.view.activity.DatabaseViewActivity"
             android:label="@string/title_activity_database_view"
             android:launchMode="singleTop"
-            android:parentActivityName=".view.activity.MainActivity" >
+            android:parentActivityName=".ui.view.activity.MainActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".view.activity.MainActivity" />
+                android:value=".ui.view.activity.MainActivity" />
         </activity>
         <activity
-            android:name=".view.activity.QuerySelectViewActivity"
+            android:name=".ui.view.activity.QuerySelectViewActivity"
             android:label="@string/title_activity_qryselect_view"
             android:launchMode="standard"
-            android:parentActivityName=".view.activity.DatabaseViewActivity" >
+            android:parentActivityName=".ui.view.activity.DatabaseViewActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".view.activity.DatabaseViewActivity" />
+                android:value=".ui.view.activity.DatabaseViewActivity" />
         </activity>
         <activity
-            android:name=".view.activity.RecordViewActivity"
+            android:name=".ui.view.activity.RecordViewActivity"
             android:label="@string/title_activity_record_view"
-            android:parentActivityName=".view.activity.QuerySelectViewActivity" >
+            android:parentActivityName=".ui.view.activity.QuerySelectViewActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".view.activity.QuerySelectViewActivity" />
+                android:value=".ui.view.activity.QuerySelectViewActivity" />
         </activity>
         <activity
-            android:name=".view.activity.RecordAddActivity"
+            android:name=".ui.view.activity.RecordAddActivity"
             android:label="@string/title_activity_record_add"
-            android:parentActivityName=".view.activity.QuerySelectViewActivity" >
+            android:parentActivityName=".ui.view.activity.QuerySelectViewActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".view.activity.QuerySelectViewActivity" />
+                android:value=".ui.view.activity.QuerySelectViewActivity" />
         </activity>
         <activity
-            android:name=".view.activity.CreateTableActivity"
+            android:name=".ui.view.activity.CreateTableActivity"
             android:label="@string/title_activity_table_edit"
-            android:parentActivityName=".view.activity.DatabaseViewActivity" >
+            android:parentActivityName=".ui.view.activity.DatabaseViewActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".view.activity.DatabaseViewActivity" />
+                android:value=".ui.view.activity.DatabaseViewActivity" />
         </activity>
         <activity
-            android:name=".view.activity.SettingsActivity"
+            android:name=".ui.view.activity.SettingsActivity"
             android:label="@string/title_activity_preference"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" >
         </activity>
         <activity
-            android:name=".view.activity.TempPreferenceActivity"
+            android:name=".ui.view.activity.TempPreferenceActivity"
             android:label="@string/title_activity_temp_preference" >
         </activity>
         <activity
-            android:name=".view.activity.DatabaseInfoActivity"
+            android:name=".ui.view.activity.DatabaseInfoActivity"
             android:label="@string/title_activity_database_view_info"
-            android:parentActivityName=".view.activity.DatabaseViewActivity" >
+            android:parentActivityName=".ui.view.activity.DatabaseViewActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".view.activity.DatabaseViewActivity" />
+                android:value=".ui.view.activity.DatabaseViewActivity" />
         </activity>
         <activity
             android:name=".TableCreateActivity"

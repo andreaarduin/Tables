@@ -1,6 +1,6 @@
 package it.arduin.tables.model;
 
-import it.arduin.tables.view.adapter.ColumnSettingsAdapter;
+import it.arduin.tables.ui.view.adapter.ColumnSettingsAdapter;
 
 public class ColumnSettingsHolder {
     public String name;
