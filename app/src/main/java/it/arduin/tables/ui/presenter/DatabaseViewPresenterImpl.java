@@ -11,7 +11,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 import it.arduin.tables.R;
-import it.arduin.tables.TableCreateActivity;
+import it.arduin.tables.ui.view.activity.TableCreateActivity;
 import it.arduin.tables.model.ColumnPair;
 import it.arduin.tables.model.TableHolder;
 import it.arduin.tables.utils.DBUtils;

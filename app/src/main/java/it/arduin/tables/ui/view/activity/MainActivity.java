@@ -20,6 +20,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 import butterknife.InjectView;
+import it.arduin.tables.BuildConfig;
 import it.arduin.tables.model.DatabaseHolder;
 import it.arduin.tables.ui.presenter.MainPresenter;
 import it.arduin.tables.R;
@@ -313,10 +314,16 @@ public class MainActivity extends BaseProjectActivity {
 
 
     public void showAboutAlert() {
-        Intent i= new Intent(this, SelectViewActivity.class);
-        startActivity(i);
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-        alertDialogBuilder.setMessage("By Andrea Arduin");
+        String message=getString(R.string.MainActivity_credits)+"\n";
+        message+="com.melnykov:floatingactionbutton:1.3.0"+"\n";
+        message+="com.balysv:material-ripple:1.0.1"+"\n";
+        message+="jp.wasabeef:recyclerview-animators:1.2.0@aar"+"\n";
+        message+="io.reactivex:rxjava:1.0.8"+"\n";
+        message+="io.reactivex:rxandroid:0.24.0"+"\n";
+        message+="io.reactivex:rxandroid-framework:0.24.0"+"\n";
+        message+="com.jakewharton:butterknife:6.1.0"+"\n";
+        alertDialogBuilder.setMessage(message);
         alertDialogBuilder.setTitle(getString(R.string.action_about));
         alertDialogBuilder.setNeutralButton(getString(R.string.ok),
                 new DialogInterface.OnClickListener() {

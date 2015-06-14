@@ -346,15 +346,11 @@ public class DBUtils {
         }
     }
 
-    public static void createTable(String path,TableStructure t){
-        try {
-            SQLiteDatabase db = SQLiteDatabase.openOrCreateDatabase(path,null);
-            String command = t.getCreateCommand();
-            Log.wtf("execSQL", command);
-            db.execSQL(command);
-        }
-        catch (Exception e){
-            throw e;
-        }
+    public static void createTable(String path,TableStructure t)throws Exception{
+        SQLiteDatabase db = SQLiteDatabase.openOrCreateDatabase(path,null);
+        String command = t.getCreateCommand();
+        Log.wtf("execSQL", command);
+        db.execSQL(command);
+
     }
 }

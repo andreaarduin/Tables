@@ -108,4 +108,5 @@
     <string name="CreateTableActivity_previous">Previous</string>
     <string name="CreateTableActivity_add">Add</string>
     <string name="CreateTableActivity_confirm">Confirm</string>
+    <string name="MainActivity_credits">Developed by Andrea Arduin using the following libraries</string>
 </resources>

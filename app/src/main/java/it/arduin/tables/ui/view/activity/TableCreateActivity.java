@@ -1,4 +1,4 @@
-package it.arduin.tables;
+package it.arduin.tables.ui.view.activity;
 
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -18,6 +18,7 @@ import java.util.ArrayList;
 
 import butterknife.InjectView;
 import butterknife.OnClick;
+import it.arduin.tables.R;
 import it.arduin.tables.model.ColumnSettingsHolder;
 import it.arduin.tables.model.DatabaseHolder;
 import it.arduin.tables.model.TableStructure;
@@ -25,6 +26,7 @@ import it.arduin.tables.ui.view.activity.BaseProjectActivity;
 import it.arduin.tables.ui.view.adapter.ColumnSettingsAdapter;
 import it.arduin.tables.ui.view.adapter.CreateTableViewPagerAdapter;
 import it.arduin.tables.ui.view.fragment.CreateTableColumnsFragment;
+import it.arduin.tables.ui.view.fragment.CreateTableSettingsFragment;
 import it.arduin.tables.utils.DBUtils;
 
 public class TableCreateActivity extends BaseProjectActivity {
@@ -87,11 +89,13 @@ public class TableCreateActivity extends BaseProjectActivity {
 
     private void onConfirm() {
         //TODO show a dialog and ask the user to confirm the creation or get back and make changes
-        Snackbar.make(findViewById(R.id.rootView),"Sad",Snackbar.LENGTH_LONG).show();
+
+        CreateTableSettingsFragment firstScreen = (CreateTableSettingsFragment) getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.container + ":" + 0);
+        String tblName = firstScreen.getTableName();//TODO get full string intstead of the name
         ArrayList<ColumnSettingsHolder> columns = new ArrayList<>();
         ArrayList<ColumnSettingsHolder> primaryKeys = new ArrayList<>();
         ArrayList<ColumnSettingsHolder> uniques = new ArrayList<>();
-        CreateTableColumnsFragment secondScreen = (CreateTableColumnsFragment) mViewPagerAdapter.getItem(1);
+        CreateTableColumnsFragment secondScreen = (CreateTableColumnsFragment) getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.container + ":" + 1);
         ArrayList<ColumnSettingsHolder> list = secondScreen.getColumns();
         for (int i = 0; i <  list.size(); i++) {
             ColumnSettingsHolder data = list.get(i);
@@ -99,8 +103,14 @@ public class TableCreateActivity extends BaseProjectActivity {
             if(data.getUnique()) uniques.add(data);
             columns.add(data);
         }
-        TableStructure t = new TableStructure("TODOtblname",columns,primaryKeys,uniques);
-        DBUtils.createTable(dbh.getPath(), t);
+        TableStructure t = new TableStructure(tblName,columns,primaryKeys,uniques);
+        try{
+            DBUtils.createTable(dbh.getPath(), t);
+            finish();
+        }
+        catch (Exception e){
+            Toast.makeText(this,e.getLocalizedMessage(),Toast.LENGTH_LONG).show();
+        }
     }
 
     @Override

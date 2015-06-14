@@ -6,7 +6,10 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 import it.arduin.tables.R;
 
 /**
@@ -17,6 +20,8 @@ import it.arduin.tables.R;
 public class CreateTableSettingsFragment extends Fragment {
 
 
+    @InjectView(R.id.tableName)
+    EditText tableName;
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
@@ -46,8 +51,13 @@ public class CreateTableSettingsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_create_table_settings, container, false);
+        View v = inflater.inflate(R.layout.fragment_create_table_settings, container, false);
+        ButterKnife.inject(this,v);
+        return v;
     }
 
 
+    public String getTableName() {
+        return tableName.getText().toString();
+    }
 }

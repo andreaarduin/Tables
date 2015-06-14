@@ -8,14 +8,13 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 
 import java.util.ArrayList;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import it.arduin.tables.R;
-import it.arduin.tables.TableCreateActivity;
+import it.arduin.tables.ui.view.activity.TableCreateActivity;
 import it.arduin.tables.model.ColumnSettingsHolder;
 import it.arduin.tables.ui.view.adapter.ColumnSettingsAdapter;
 import it.arduin.tables.utils.RecyclerViewUtils;
@@ -50,7 +49,7 @@ public class CreateTableColumnsFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        setRetainInstance(true);
     }
 
     @Override
@@ -66,6 +65,7 @@ public class CreateTableColumnsFragment extends Fragment {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_create_table_columns, container, false);
         ButterKnife.inject(this, v);
+        mRecyclerView = (RecyclerView) v.findViewById(R.id.list);
         return v;
     }
     @Override
@@ -87,6 +87,7 @@ public class CreateTableColumnsFragment extends Fragment {
 
     public ArrayList<ColumnSettingsHolder> getColumns(){
         ArrayList<ColumnSettingsHolder> list = new ArrayList<>();
+        if(mRecyclerView==null) return list;
         for(int i=0;i<mRecyclerView.getChildCount();i++){
             View v =  mRecyclerView.getChildAt(i);
             ColumnSettingsAdapter.ViewHolder view = new ColumnSettingsAdapter.ViewHolder(v);

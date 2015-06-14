@@ -83,7 +83,7 @@
                 android:value=".ui.view.activity.DatabaseViewActivity" />
         </activity>
         <activity
-            android:name=".TableCreateActivity"
+            android:name=".ui.view.activity.TableCreateActivity"
             android:label="@string/title_activity_table_create" >
         </activity>
     </application>

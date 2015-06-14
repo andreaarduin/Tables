@@ -3,8 +3,8 @@ package it.arduin.tables.ui.view.adapter;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentStatePagerAdapter;
 
-import it.arduin.tables.TableCreateActivity;
 import it.arduin.tables.ui.view.fragment.CreateTableColumnsFragment;
 import it.arduin.tables.ui.view.fragment.CreateTableSettingsFragment;
 
@@ -31,6 +31,7 @@ public class CreateTableViewPagerAdapter  extends FragmentPagerAdapter {
                 return CreateTableSettingsFragment.newInstance();
         }
     }
+
 }
 
 
