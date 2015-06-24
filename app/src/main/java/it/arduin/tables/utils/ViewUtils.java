@@ -4,7 +4,7 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.support.v7.widget.Toolbar;
 
-import it.arduin.tables.ui.view.activity.BaseProjectActivity;
+import it.arduin.tables.ui.BaseProjectActivity;
 import jp.wasabeef.recyclerview.animators.*;
 
 /**

@@ -73,8 +73,8 @@
     <string name="mainActivity_close_confirmation_message">Are you sure you want to close Tables?</string>
     <string name="mainActivity_close_confirmation_title">Quit Tables?</string>
     <string name="mainActivity_add_db_new">New</string>
-    <string name="DatabaseInfoActivity_delete_title">Confirm</string>
-    <string name="DatabaseInfoActivity_delete_message">Are you sure you want to delete this database? The operation will not be cancelable</string>
+    <string name="DatabaseViewInfoActivity_delete_title">Confirm</string>
+    <string name="DatabaseViewInfoActivity_delete_message">Are you sure you want to delete this database? The operation will not be cancelable</string>
     <string name="DatabaseViewActivity_loading_message">Loading tables, please wait…</string>
     <string name="mainActivity_loading_message">Loading databases, please wait…</string>
     <string name="DatabaseViewActivity_refresh">Refresh</string>
@@ -109,4 +109,7 @@
     <string name="CreateTableActivity_add">Add</string>
     <string name="CreateTableActivity_confirm">Confirm</string>
     <string name="MainActivity_credits">Developed by Andrea Arduin using the following libraries</string>
+    <string name="TableCreateActivity_confirm_message">Are you sure you want to create the table?</string>
+    <string name="MainActivity_no_dbs_message">You haven\'t added any database yet, add one!</string>
+    <string name="DatabaseViewInfoActivity_delete">Delete file</string>
 </resources>

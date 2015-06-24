@@ -1,63 +1,80 @@
-<LinearLayout
+
+<android.support.design.widget.CoordinatorLayout
+xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:app="http://schemas.android.com/apk/res-auto"
+xmlns:tools="http://schemas.android.com/tools"
+android:id="@+id/coordinatorLayout"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+tools:context=".MainActivity"
+android:background="@color/defaultwhite">
+<android.support.v4.widget.SwipeRefreshLayout
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    android:id="@+id/swipe_refresh"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    xmlns:android="http://schemas.android.com/apk/res/android">
-    <include layout="@layout/toolbar"
-        android:id="@+id/toolbar"/>
-
-    <FrameLayout
+    android:layout_height="match_parent">
+    <android.support.v4.widget.NestedScrollView
+        android:id="@+id/scrollView1"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        android:fillViewport="true"
+        android:background="@color/defaultwhite"
+        android:layout_gravity="center|top"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        android:scrollbars="horizontal|vertical">
 
+    <HorizontalScrollView
+        android:id="@+id/hscrollView1"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:fillViewport="true"
+        android:layout_gravity="start"
+        android:background="@color/defaultwhite"
+        android:scrollbars="horizontal|vertical"
         >
-        <View
-            android:layout_height="wrap_content"
+
+        <TableLayout
+            android:id="@+id/table_main"
+            android:background="@android:color/transparent"
+            android:collapseColumns="*"
+            android:stretchColumns="*"
+            android:scrollbars="vertical"
             android:layout_width="match_parent"
-            android:id="@+id/shadow"
-            android:background="@drawable/bottom_shadow"
-            />
+            android:layout_height="match_parent"
+            android:layout_gravity="bottom">
 
-        <com.melnykov.fab.ObservableScrollView
-            android:id="@+id/scrollView1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:fillViewport="true"
-            android:background="@color/defaultwhite"
-            android:layout_gravity="center|top"
-            android:scrollbars="horizontal|vertical">
+            <TableRow
+                android:background="@drawable/flat_list_background">
+            </TableRow>
+        </TableLayout>
+    </HorizontalScrollView>
 
-        <HorizontalScrollView
-            android:id="@+id/hscrollView1"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:fillViewport="true"
-            android:layout_gravity="start"
-            android:background="@color/defaultwhite"
-            android:scrollbars="horizontal|vertical"
-            >
+    </android.support.v4.widget.NestedScrollView>
+</android.support.v4.widget.SwipeRefreshLayout>
 
-            <TableLayout
-                android:id="@+id/table_main"
-                android:background="@android:color/transparent"
-                android:collapseColumns="*"
-                android:stretchColumns="*"
-                android:scrollbars="vertical"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_gravity="bottom">
+<android.support.design.widget.AppBarLayout
+    android:id="@+id/appbar"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
 
-                    <TableRow
-                        android:background="@drawable/flat_list_background">
-                    </TableRow>
-            </TableLayout>
-        </HorizontalScrollView>
-    </com.melnykov.fab.ObservableScrollView>
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:elevation="0dp"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        app:layout_scrollFlags="scroll|enterAlways" />
 
+</android.support.design.widget.AppBarLayout>
 
-        <include layout="@layout/fab_query"/>
+<View
+    android:layout_width="match_parent"
+    app:layout_scrollFlags="scroll|enterAlways"
+    app:layout_anchor="@id/toolbar"
+    app:layout_anchorGravity="bottom"
+    android:background="@drawable/bottom_shadow"
+    android:layout_height="5dp"/>
 
-
-    </FrameLayout>
-
-</LinearLayout>
+<include layout="@layout/fab_query"
+    />
+</android.support.design.widget.CoordinatorLayout>

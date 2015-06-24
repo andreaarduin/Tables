@@ -47,7 +47,7 @@
     <string name="DatabaseViewActivity_delete_table_message">Vuoi cancellare la tabella</string>
     <string name="DatabaseViewActivity_error_opening_db">Non riesco ad aprire il database</string>
     <string name="DatabaseViewActivity_rename_table_message">Inserisci il nuovo nome</string>
-    <string name="DatabaseViewInfoActivity_filepath">Percorso</string>
+    <string name="DatabaseViewInfoActivity_filepath">Percorso file</string>
     <string name="DatabaseViewInfoActivity_filesize">Dimensione</string>
     <string name="DatabaseViewInfoActivity_hashcode">Codice hash</string>
     <string name="DatabaseViewInfoActivity_indexes">Indici</string>
@@ -55,8 +55,8 @@
     <string name="DatabaseViewInfoActivity_tables">Tabelle</string>
     <string name="mainActivity_close_confirmation_message">Sei sicuro di voler uscire da Tables?</string>
     <string name="mainActivity_close_confirmation_title">Uscita</string>
-    <string name="DatabaseInfoActivity_delete_title">Conferma</string>
-    <string name="DatabaseInfoActivity_delete_message">Sei sicuro di voler cancellare il database? L\' operazione non sarà annullabile</string>
+    <string name="DatabaseViewInfoActivity_delete_title">Conferma</string>
+    <string name="DatabaseViewInfoActivity_delete_message">Sei sicuro di voler cancellare il database? L\' operazione non sarà annullabile</string>
     <string name="DatabaseViewActivity_loading_message">Sto caricando le tabelle, attendi prego…</string>
     <string name="mainActivity_loading_message">Carico i database, attendi prego</string>
     <string name="DatabaseViewActivity_refresh">Aggiorna</string>
@@ -71,4 +71,12 @@
     <string name="DatabaseViewActivity_new_query_success">Sembra che la query sia stata eseguita con successo! E\' consigliabile ricaricare le tabelle</string>
     <string name="DatabaseViewActivity_new_select_query_message">Scrivi qui una query che restituisce valori (per esempio SELECT)</string>
     <string name="DatabaseViewActivity_new_select_query_title">Nuova query di tipo select</string>
+    <string name="CreateTableActivity_add">Aggiungi</string>
+    <string name="CreateTableActivity_confirm">Conferma</string>
+    <string name="CreateTableActivity_next">Avanti</string>
+    <string name="CreateTableActivity_previous">Indietro</string>
+    <string name="MainActivity_credits">Sviluppato da Andrea Arduin utilizzando le seguenti librerie</string>
+    <string name="MainActivity_no_dbs_message">Non hai ancora aggiunto nessun database, aggiungine uno!</string>
+    <string name="TableCreateActivity_confirm_message">Sei sicuro di voler creare la tabella?</string>
+    <string name="DatabaseViewInfoActivity_delete">Cancella file</string>
 </resources>

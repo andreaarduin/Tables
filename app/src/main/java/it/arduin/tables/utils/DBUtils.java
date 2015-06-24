@@ -206,7 +206,7 @@ public class DBUtils {
         Cursor c;
         ArrayList<String> list=new ArrayList<>();
         try {
-            db = SQLiteDatabase.openDatabase(path, null, SQLiteDatabase.CREATE_IF_NECESSARY);
+            db = SQLiteDatabase.openOrCreateDatabase(path, null, null);
             c = db.rawQuery("SELECT name FROM sqlite_master WHERE type = \"table\"", null);
         } catch (Exception e) {return list;}
         if(c==null) return list;
@@ -320,31 +320,6 @@ public class DBUtils {
         return f.delete();
     }
 
-    public static void createTable(String path,String name,ArrayList<ColumnSettingsHolder> data){
-        try {
-            SQLiteDatabase db = SQLiteDatabase.openOrCreateDatabase(path,null);
-            String sql = "CREATE TABLE IF NOT EXISTS `" + name + "` (";
-            String primaryKeys = "";
-            for (int i = 0; i < data.size(); i++) {
-                sql += data.get(i).getColumnDefinition();
-                if (i != data.size() - 1) {
-                    sql += ",";
-                }
-                if (data.get(i).primaryKey) {
-                    primaryKeys += data.get(i).name + ",";
-                }
-            }
-            if (primaryKeys.length() != 0) {
-                primaryKeys = primaryKeys.substring(0, primaryKeys.length() - 1);
-                sql = sql + ", PRIMARY KEY(" + primaryKeys + ")";
-            }
-            sql += ")";
-            db.execSQL(sql);
-        }
-        catch (Exception e){
-            throw e;
-        }
-    }
 
     public static void createTable(String path,TableStructure t)throws Exception{
         SQLiteDatabase db = SQLiteDatabase.openOrCreateDatabase(path,null);
@@ -352,5 +327,9 @@ public class DBUtils {
         Log.wtf("execSQL", command);
         db.execSQL(command);
 
+    }
+
+    public static void createDatabase(String path)throws Exception{
+        SQLiteDatabase db = SQLiteDatabase.openOrCreateDatabase(path,null);
     }
 }

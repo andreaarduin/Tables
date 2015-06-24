@@ -3,7 +3,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
 
-    tools:context="it.arduin.tables.ui.view.activity.TempPreferenceActivity">
+    tools:context="it.arduin.tables.ui.settings.TempPreferenceActivity">
 
     <include layout="@layout/toolbar"
         android:id="@+id/toolbar"/>

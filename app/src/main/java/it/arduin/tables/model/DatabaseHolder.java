@@ -1,38 +1,34 @@
 package it.arduin.tables.model;
 
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.io.File;
 import java.util.ArrayList;
 
 import it.arduin.tables.utils.DBUtils;
 
 public class DatabaseHolder implements Parcelable {
-    private String name;
     private String path;
-    private int index;
-    //base
-    public String getName(){
-        return name;
-    }
+
     public String getPath(){
         return path;
     }
-    public int getIndex(){return index;}
+    public String getName(){
+        int slash,dot;
+        slash=path.lastIndexOf("/");
+        dot=path.lastIndexOf('.');
+        if(dot == -1) dot = path.length();
+        return path.substring(1 + slash,dot);
+    }
 
-    public DatabaseHolder(String text, String desc,int index) {
-        this.name = text;
-        this.path=desc;
-        this.index=index;
+    public DatabaseHolder(String path) {
+        this.path=path;
     }
     //parcelable
+
     public DatabaseHolder(Parcel source){
-        name=source.readString();
         path=source.readString();
-        index=source.readInt();
     }
     @Override
     public int describeContents(){
@@ -40,9 +36,7 @@ public class DatabaseHolder implements Parcelable {
     }
     @Override
     public void writeToParcel(Parcel dest,int flags){
-        dest.writeString(name);
         dest.writeString(path);
-        dest.writeInt(index);
     }
     public final static Creator CREATOR = new Creator(){
         @Override
@@ -54,6 +48,8 @@ public class DatabaseHolder implements Parcelable {
             return new DatabaseHolder[size];
         }
     };
+
+
     //methods
     public ArrayList<String> getTables() {
         return DBUtils.getTables(path);
