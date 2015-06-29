@@ -23,8 +23,8 @@ import it.arduin.tables.utils.SharedPreferencesOperations;
 
 
 public class SettingsActivity extends BaseProjectActivity {
-    final static int RATIO=50;// query limit unit/ minimum change
-    final static int QUERY_LIMIT_MAX=41;//1+query limit range
+    final static int RATIO=10;// query limit unit/ minimum change
+    final static int QUERY_LIMIT_MAX=40;//1+query limit range
     final static int COLUMN_LIMIT_MAX=51;//1+column limit range
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -9,6 +9,7 @@
     tools:context=".MainActivity"
     android:background="@color/defaultwhite">
         <android.support.v7.widget.RecyclerView
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
             android:id="@+id/list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

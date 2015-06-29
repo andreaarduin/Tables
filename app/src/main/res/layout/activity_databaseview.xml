@@ -46,4 +46,5 @@
     <include layout="@layout/fab_add"
         android:src="@drawable/ic_action_add"
         />
+
 </android.support.design.widget.CoordinatorLayout>

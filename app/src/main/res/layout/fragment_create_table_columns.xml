@@ -1,27 +1,135 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="@dimen/medium_padding"
     android:orientation="vertical"
-    tools:context="it.arduin.tables.ui.createTable.CreateTableColumnsFragment">
+    tools:context="it.arduin.tables.ui.createTable.CreateTableColumnFragment">
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/list"
-        android:paddingTop="?attr/actionBarSize"
-        android:paddingBottom="@dimen/bottom_bar_height"
-        android:clipToPadding="false"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        />
-
-    <include
-        layout="@layout/fab_add"
-        android:id="@+id/fab"
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginRight="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="@dimen/bottom_bar_height_with_margin"
-        android:layout_gravity="bottom|end"/>
-</FrameLayout>
+        android:orientation="vertical"
+        android:background="@drawable/card_selector"
+        android:id="@+id/root"
+        xmlns:android="http://schemas.android.com/apk/res/android">
+
+        <EditText
+            android:id="@+id/name"
+            android:inputType="text"
+            android:gravity="center"
+            android:hint="@string/RowColumnSettings_name_hint"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            />
+        <!-- divider-->
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginBottom="@dimen/smaller_padding"
+            android:background="@color/defaultgrey"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:orientation="horizontal"
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_width="wrap_content"
+                android:text="@string/RowColumnSettings_type"
+                android:layout_height="wrap_content" />
+            <Spinner
+                android:id="@+id/type"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="@dimen/medium_padding"
+                android:paddingRight="@dimen/medium_padding"
+                android:spinnerMode="dropdown"
+                android:drawSelectorOnTop="true"
+                />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:orientation="horizontal"
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_width="wrap_content"
+                android:text="@string/RowColumnSettings_default"
+                android:layout_height="wrap_content" />
+            <EditText
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:id="@+id/def_value"
+                android:hint="@string/RowColumnSettings_default_hint"
+                android:layout_height="wrap_content"
+
+                />
+        </LinearLayout>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:orientation="horizontal"
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_width="wrap_content"
+                android:text="@string/RowColumnSettings_autoinc"
+                android:layout_height="wrap_content" />
+            <Switch
+                android:id="@+id/autoinc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true" />
+        </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:orientation="horizontal"
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_width="wrap_content"
+                android:text="@string/RowColumnSettings_notnull"
+                android:layout_height="wrap_content" />
+            <Switch
+                android:id="@+id/notnull"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true" />
+        </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:orientation="horizontal"
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_width="wrap_content"
+                android:text="@string/RowColumnSettings_primarykey"
+                android:layout_height="wrap_content" />
+            <Switch
+                android:id="@+id/primarykey"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true" />
+        </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:orientation="horizontal"
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_width="wrap_content"
+                android:text="@string/RowColumnSettings_unique"
+                android:layout_height="wrap_content" />
+            <Switch
+                android:id="@+id/unique"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true" />
+        </RelativeLayout>
+
+    </LinearLayout>
+
+
+</ScrollView>

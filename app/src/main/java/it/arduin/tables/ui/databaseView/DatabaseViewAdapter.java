@@ -64,9 +64,7 @@ public class DatabaseViewAdapter extends RecyclerView.Adapter<DatabaseViewAdapte
         return list.get(position);
     }
     public void clear(){
-        for(int i = 0;i<list.size();i++){
-            remove(i);
-        }
+        while(list.size()!=0) remove(0);
     }
     public class ViewHolder extends RecyclerView.ViewHolder {
         public TextView name;

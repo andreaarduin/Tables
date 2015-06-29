@@ -104,7 +104,7 @@
     <string name="DatabaseViewActivity_new_select_query_message">Write here a query that returns data (e.g. SELECT)</string>
     <string name="CreateTableSettingsFragment_rowid_hint">Checked = with rowid</string>
     <string name="title_activity_table_create">TableCreateActivity</string>
-    <string name="CreateTableActivity_next">Next</string>
+    <string name="CreateTableActivity_next">Next </string>
     <string name="CreateTableActivity_previous">Previous</string>
     <string name="CreateTableActivity_add">Add</string>
     <string name="CreateTableActivity_confirm">Confirm</string>
@@ -112,4 +112,9 @@
     <string name="TableCreateActivity_confirm_message">Are you sure you want to create the table?</string>
     <string name="MainActivity_no_dbs_message">You haven\'t added any database yet, add one!</string>
     <string name="DatabaseViewInfoActivity_delete">Delete file</string>
+    <string name="title_activity_query_view">QueryViewActivity</string>
+    <string name="action_delete">delete</string>
+    <string name="CreateTableActivity_error_no_columns">Can\'t create a table with no columns, please add one or more columns</string>
+    <string name="CreateTableActivity_error_first_page_delete">Can\'t delete the first page!</string>
+    <string name="CreateTableActivity_error_first_page">Already at the first page, can\'t go back any further</string>
 </resources>

@@ -1,33 +1,39 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:fab="http://schemas.android.com/apk/res-auto"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/rootView"
     android:layout_height="match_parent"
     android:layout_width="match_parent"
     android:orientation="vertical">
-        <android.support.v4.view.ViewPager
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/container"
-            />
-        <LinearLayout
-            android:layout_alignParentTop="true"
-            android:layout_width="match_parent"
-            android:orientation="vertical"
-            android:id="@+id/toolbarContainer"
-            android:layout_height="wrap_content">
-            <include layout="@layout/toolbar"/>
-            <View
-                android:layout_height="wrap_content"
-                android:layout_width="match_parent"
-                android:id="@+id/shadow"
-                android:background="@drawable/bottom_shadow"
-                />
-        </LinearLayout>
+    <android.support.v4.view.ViewPager
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/container"
+        android:layout_below="@+id/toolbar" />
+    <include layout="@layout/toolbar"
+        android:id="@+id/toolbar" />
     <include
         layout="@layout/bottom_bar"
+        android:id="@+id/bottombar"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:layout_alignParentBottom="true"
-        />
+        app:layout_anchor="@id/container"
+        app:layout_anchorGravity="bottom"
+        android:layout_alignParentBottom="true" />
+    <android.support.design.widget.FloatingActionButton
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        app:borderWidth="0dp"
+        android:id="@+id/fab"
+        android:src="@drawable/ic_fab_add"
+        app:elevation="0dp"
+        app:pressedTranslationZ="12dp"
+        app:backgroundTint="@color/colorPrimary"
+        app:rippleColor="@color/colorPrimaryDark"
+        android:layout_width="wrap_content"
+        android:layout_marginBottom="@dimen/bottombar_fab_offset"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/bottombar"
+        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>

@@ -86,6 +86,10 @@
             android:name=".ui.createTable.TableCreateActivity"
             android:label="@string/title_activity_table_create" >
         </activity>
+        <activity
+            android:name=".ui.queryView.QueryViewActivity"
+            android:label="@string/title_activity_query_view" >
+        </activity>
     </application>
 
 </manifest>

@@ -73,10 +73,13 @@
     <string name="DatabaseViewActivity_new_select_query_title">Nuova query di tipo select</string>
     <string name="CreateTableActivity_add">Aggiungi</string>
     <string name="CreateTableActivity_confirm">Conferma</string>
-    <string name="CreateTableActivity_next">Avanti</string>
+    <string name="CreateTableActivity_next">Avanti </string>
     <string name="CreateTableActivity_previous">Indietro</string>
     <string name="MainActivity_credits">Sviluppato da Andrea Arduin utilizzando le seguenti librerie</string>
     <string name="MainActivity_no_dbs_message">Non hai ancora aggiunto nessun database, aggiungine uno!</string>
     <string name="TableCreateActivity_confirm_message">Sei sicuro di voler creare la tabella?</string>
     <string name="DatabaseViewInfoActivity_delete">Cancella file</string>
+    <string name="CreateTableActivity_error_first_page">Sei alla prima pagina, non puoi andare più indietro</string>
+    <string name="CreateTableActivity_error_first_page_delete">Non puoi cancellare la prima pagina!</string>
+    <string name="CreateTableActivity_error_no_columns">Non puoi creare una tabella senza colonne, aggiungine almeno una</string>
 </resources>

@@ -2,6 +2,7 @@ package it.arduin.tables.ui.recordAdd;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -11,7 +12,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
-import com.melnykov.fab.FloatingActionButton;
 
 import java.util.ArrayList;
 
@@ -29,7 +29,8 @@ public class RecordAddActivity extends BaseProjectActivity {
     public String table;
     public String path;
     public Intent intent;
-    @InjectView(R.id.fab) FloatingActionButton fab;
+    @InjectView(R.id.fab)
+    FloatingActionButton fab;
     @InjectView(R.id.list) public RecyclerView mRecyclerView;
 
     @Override

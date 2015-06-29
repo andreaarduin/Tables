@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.NavUtils;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -18,7 +19,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.melnykov.fab.FloatingActionButton;
 
 import java.util.ArrayList;
 
@@ -37,7 +37,8 @@ public class RecordViewActivity extends BaseProjectActivity {
     protected RecordViewPresenter mPresenter;
     @InjectView(R.id.toolbar) Toolbar toolbar;
     @InjectView(R.id.list) RecyclerView mRecyclerView;
-    @InjectView(R.id.fab)  FloatingActionButton fab;
+    @InjectView(R.id.fab)
+    FloatingActionButton fab;
 
     private AppBarLayout.OnOffsetChangedListener listener;
     @Override

@@ -1,5 +1,6 @@
 package it.arduin.tables.ui.databaseInfo;
 
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -13,7 +14,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
-import com.melnykov.fab.FloatingActionButton;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -22,7 +22,7 @@ import butterknife.InjectView;
 import it.arduin.tables.model.DatabaseHolder;
 import it.arduin.tables.R;
 import it.arduin.tables.ui.BaseProjectActivity;
-import it.arduin.tables.utils.ViewUtils;
+import it.arduin.tables.ui.ViewUtils;
 
 
 public class DatabaseInfoActivity extends BaseProjectActivity {

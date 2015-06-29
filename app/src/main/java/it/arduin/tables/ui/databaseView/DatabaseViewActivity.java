@@ -1,6 +1,7 @@
 package it.arduin.tables.ui.databaseView;
 
 import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -16,7 +17,6 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import java.io.File;
 import java.util.ArrayList;
 
 import butterknife.InjectView;
@@ -26,7 +26,7 @@ import it.arduin.tables.utils.DBUtils;
 import it.arduin.tables.model.DatabaseHolder;
 import it.arduin.tables.R;
 import it.arduin.tables.model.TableHolder;
-import it.arduin.tables.utils.ViewUtils;
+import it.arduin.tables.ui.ViewUtils;
 import it.arduin.tables.ui.RecyclerItemClickListener;
 import rx.Observable;
 import rx.Subscriber;
@@ -47,7 +47,8 @@ public class DatabaseViewActivity extends BaseProjectActivity {
     final static int ACTION_VIEW_PRAGMA_TABLE=2;
     public Toolbar toolbar;
     @InjectView(R.id.list) public android.support.v7.widget.RecyclerView mRecyclerView;
-    @InjectView(R.id.fab) com.melnykov.fab.FloatingActionButton fab;
+    @InjectView(R.id.fab)
+    FloatingActionButton fab;
     @InjectView(R.id.swipe_refresh)
     SwipeRefreshLayout mSwipeRefreshLayout;
     @InjectView(R.id.appbar) AppBarLayout mAppBarLayout;

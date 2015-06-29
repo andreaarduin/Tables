@@ -1,42 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_height="wrap_content"
-    android:layout_gravity=""
+    android:id="@+id/bottombar_container"
     android:layout_width="match_parent">
 
-    <!--<View
-        android:layout_width="match_parent"
-        android:background="@drawable/dropshadow"
-        android:layout_height="3dp"
-        android:layout_gravity="top" />-->
     <LinearLayout
-        android:layout_marginTop="3dp"
         android:layout_width="match_parent"
         android:orientation="horizontal"
+        android:id="@+id/cont"
+        android:background="#FFF"
         android:layout_height="@dimen/bottom_bar_height"
-        xmlns:android="http://schemas.android.com/apk/res/android">
-        <Button
-            android:textColor="@color/defaultwhite"
-            android:background="@color/colorPrimary"
-            android:id="@+id/buttonPrev"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:baselineAligned="false">
+        <LinearLayout
             android:layout_width="0dp"
-            android:layout_weight="1"
-            android:text="@string/CreateTableActivity_previous"
-            android:layout_height="@dimen/bottom_bar_height" />
-
-        <View
-            android:layout_width="1dp"
-            android:background="@color/colorPrimaryDark"
-            android:layout_height="match_parent"/>
-
-        <Button
-            android:textColor="@color/defaultwhite"
-            android:background="@color/colorPrimary"
-            android:id="@+id/buttonNext"
+            android:layout_height="@dimen/bottom_bar_height"
+            android:layout_weight="1">
+            <com.balysv.materialripple.MaterialRippleLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                >
+                <Button
+                    android:background="@color/transparent"
+                    android:textColor="@color/colorPrimary"
+                    android:id="@+id/buttonPrev"
+                    android:layout_width="wrap_content"
+                    android:layout_gravity="left"
+                    android:text="@string/CreateTableActivity_previous"
+                    android:layout_height="@dimen/bottom_bar_height" />
+            </com.balysv.materialripple.MaterialRippleLayout>
+        </LinearLayout>
+        <LinearLayout
             android:layout_width="0dp"
-            android:layout_weight="1"
-            android:text="@string/CreateTableActivity_next"
-            android:layout_height="@dimen/bottom_bar_height"/>
+            android:layout_height="@dimen/bottom_bar_height"
+            android:layout_weight="1">
+            <com.balysv.materialripple.MaterialRippleLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                >
+                <Button
+                    android:background="@color/transparent"
+                    android:textColor="@color/colorPrimary"
+                    android:id="@+id/buttonNext"
+                    android:layout_gravity="right"
+                    android:layout_width="wrap_content"
+                    android:text="@string/CreateTableActivity_next"
+                    android:layout_height="@dimen/bottom_bar_height" />
+            </com.balysv.materialripple.MaterialRippleLayout>
+        </LinearLayout>
+
     </LinearLayout>
-
 </FrameLayout>

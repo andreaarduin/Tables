@@ -1,7 +1,8 @@
-package it.arduin.tables.utils;
+package it.arduin.tables.ui;
 
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.Toolbar;
 
 import it.arduin.tables.ui.BaseProjectActivity;
@@ -42,7 +43,7 @@ public class ViewUtils {
         return progressDialog;
     }
     public static void setRecyclerViewAnimator(android.support.v7.widget.RecyclerView r){
-        r.setItemAnimator(new SlideInLeftAnimator());
+        r.setItemAnimator(new FadeInAnimator());
         r.getItemAnimator().setAddDuration(500);
         r.getItemAnimator().setRemoveDuration(500);
     }

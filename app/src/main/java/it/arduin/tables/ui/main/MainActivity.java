@@ -1,6 +1,7 @@
 package it.arduin.tables.ui.main;
 
 import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -26,7 +27,7 @@ import it.arduin.tables.model.DatabaseHolder;
 import it.arduin.tables.R;
 import it.arduin.tables.ui.BaseProjectActivity;
 import it.arduin.tables.utils.SharedPreferencesOperations;
-import it.arduin.tables.utils.ViewUtils;
+import it.arduin.tables.ui.ViewUtils;
 import it.arduin.tables.ui.RecyclerItemClickListener;
 import rx.Observable;
 import rx.Subscriber;
@@ -49,7 +50,7 @@ public class MainActivity extends BaseProjectActivity {
     @InjectView(R.id.list)
     android.support.v7.widget.RecyclerView mRecyclerView;
     @InjectView(R.id.fab)
-    com.melnykov.fab.FloatingActionButton fab;
+    FloatingActionButton fab;
     @InjectView(R.id.appbar) AppBarLayout mAppBarLayout;
     //@InjectView(R.id.toolbarContainer) LinearLayout toolbarContainer;
     @InjectView(R.id.swipe_refresh)

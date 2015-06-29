@@ -1,4 +1,4 @@
-package it.arduin.tables.utils;
+package it.arduin.tables.ui;
 /*
  * Copyright 2015, Randy Saborio & Tinbytes, Inc.
  *

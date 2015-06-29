@@ -1,6 +1,7 @@
 package it.arduin.tables.ui.queryView;
 
 import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
@@ -27,7 +28,7 @@ import butterknife.InjectView;
 import it.arduin.tables.R;
 import it.arduin.tables.ui.BaseProjectActivity;
 import it.arduin.tables.ui.settings.SettingsActivity;
-import it.arduin.tables.utils.ViewUtils;
+import it.arduin.tables.ui.ViewUtils;
 import it.arduin.tables.ui.ShortenedTextView;
 import rx.Observable;
 import rx.Subscriber;
@@ -57,7 +58,8 @@ public class QuerySelectViewActivity extends BaseProjectActivity {
     @InjectView(R.id.scrollView1)
     NestedScrollView scrollview;
     @InjectView(R.id.toolbar) Toolbar toolbar;
-    @InjectView(R.id.fab)  com.melnykov.fab.FloatingActionButton fab;
+    @InjectView(R.id.fab)
+    FloatingActionButton fab;
     @InjectView(R.id.table_main)
     public TableLayout stk;
     @InjectView(R.id.swipe_refresh)

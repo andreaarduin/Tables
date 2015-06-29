@@ -1,6 +1,10 @@
 package it.arduin.tables.ui.createTable;
 
+import android.app.ActionBar;
 import android.content.DialogInterface;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
@@ -9,7 +13,9 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -25,12 +31,14 @@ import it.arduin.tables.utils.DBUtils;
 
 public class TableCreateActivity extends BaseProjectActivity {
     private DatabaseHolder dbh;
-    @InjectView(R.id.toolbar) Toolbar toolbar;
     @InjectView(R.id.container) ViewPager mViewPager;
     private CreateTableViewPagerAdapter mViewPagerAdapter;
-    @InjectView(R.id.toolbarContainer) LinearLayout toolbarContainer;
+    private ViewPager.OnPageChangeListener onPageChangeListener;
+    @InjectView(R.id.toolbar) Toolbar toolbar;
     @InjectView(R.id.buttonNext) Button btnNext;
     @InjectView(R.id.buttonPrev) Button btnPrev;
+    @InjectView(R.id.fab)  FloatingActionButton fab;
+    //@InjectView(R.id.bottombar_container) FrameLayout bottombar_container;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_table_create);
@@ -38,8 +46,10 @@ public class TableCreateActivity extends BaseProjectActivity {
         if (toolbar != null) {
             setSupportActionBar(toolbar);
             toolbar.setTitleTextColor(0xFFFFFFFF);
+            toolbar.setTitle(dbh.getName());
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
+
         /*fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -49,39 +59,42 @@ public class TableCreateActivity extends BaseProjectActivity {
         });*/
         mViewPagerAdapter = new CreateTableViewPagerAdapter(getSupportFragmentManager());
         mViewPager.setAdapter(mViewPagerAdapter);
+        onPageChangeListener = new PageChangeListener();
+        mViewPager.addOnPageChangeListener(onPageChangeListener);
         mViewPager.setCurrentItem(0);
     }
 
     @OnClick(R.id.buttonPrev)
-    public void goBack(){
-        mViewPager.setCurrentItem(mViewPager.getCurrentItem() - 1);
-        btnNext.setText(getString(R.string.CreateTableActivity_next));
-        if((mViewPager.getCurrentItem()-1) == 0){
-            btnPrev.setClickable(false);
-            btnPrev.setText("");
-        }
-        else{
-            btnPrev.setClickable(true);
-            btnPrev.setText(getString(R.string.CreateTableActivity_previous));
-        }
+    public void onButtonPreviousPressed(){
+        if(0==mViewPager.getCurrentItem()) Toast.makeText(this,getString(R.string.CreateTableActivity_error_first_page),Toast.LENGTH_LONG).show();
+        else mViewPager.setCurrentItem(mViewPager.getCurrentItem()-1);
     }
     @OnClick(R.id.buttonNext)
-    public void goFwd(){
-        Log.wtf("current", "" + mViewPager.getCurrentItem());
+    public void onButtonNextPressed(){
         if((mViewPager.getCurrentItem()) == mViewPagerAdapter.getCount()-1){
             onConfirm();
         }
-        else if((mViewPager.getCurrentItem()) == mViewPagerAdapter.getCount()-2){
-            btnNext.setText(getString(R.string.CreateTableActivity_confirm));
-            mViewPager.setCurrentItem(mViewPager.getCurrentItem()+1);
-        }
-        else{
-            mViewPager.setCurrentItem(mViewPager.getCurrentItem()+1);
-            btnNext.setText(getString(R.string.CreateTableActivity_next));
-        }
+        if(mViewPagerAdapter.getCount()==mViewPager.getCurrentItem()) return;
+        else mViewPager.setCurrentItem(mViewPager.getCurrentItem()+1);
+    }
+
+    @OnClick(R.id.fab)
+    public void addAPage(){
+        mViewPagerAdapter.addColumnPage();
+        setNextButton();
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        toolbar.setTitle(dbh.getName());//for some reason settitle didn't work in oncreate but it does here lol
     }
 
     private void onConfirm() {
+        if(mViewPagerAdapter.getCount() == 1){
+            Toast.makeText(this,getString(R.string.CreateTableActivity_error_no_columns),Toast.LENGTH_LONG).show();
+            return;
+        }
         //TODO show a dialog and ask the user to confirm the creation or get back and make changes
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
         alertDialogBuilder.setMessage(getString(R.string.TableCreateActivity_confirm_message));
@@ -110,8 +123,11 @@ public class TableCreateActivity extends BaseProjectActivity {
         ArrayList<ColumnSettingsHolder> columns = new ArrayList<>();
         ArrayList<ColumnSettingsHolder> primaryKeys = new ArrayList<>();
         ArrayList<ColumnSettingsHolder> uniques = new ArrayList<>();
-        CreateTableColumnsFragment secondScreen = (CreateTableColumnsFragment) getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.container + ":" + 1);
-        ArrayList<ColumnSettingsHolder> list = secondScreen.getColumns();
+        ArrayList<ColumnSettingsHolder> list = new ArrayList<>();
+        for(int i = 1 ; i < mViewPagerAdapter.getCount();i++){
+            CreateTableColumnFragment page  = (CreateTableColumnFragment) getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.container + ":" + i);
+            list.add(page.getColumn());
+        }
         for (int i = 0; i <  list.size(); i++) {
             ColumnSettingsHolder data = list.get(i);
             if(data.primaryKey) primaryKeys.add(data);
@@ -147,11 +163,39 @@ public class TableCreateActivity extends BaseProjectActivity {
         if (id == android.R.id.home) {
             finish();
         }
+        else if( id == R.id.action_delete){
+            deleteCurrentPage();
+        }
 
         return super.onOptionsItemSelected(item);
     }
 
-    public LinearLayout getToolbarContainer(){
-        return toolbarContainer;
+    private void deleteCurrentPage() {
+        if(mViewPager.getCurrentItem() == 0) {
+            Toast.makeText(this, getString(R.string.CreateTableActivity_error_first_page_delete), Toast.LENGTH_LONG).show();
+            return;
+        }
+        else{
+            mViewPager.setCurrentItem(mViewPager.getCurrentItem()-1);
+            mViewPagerAdapter.deletePage(mViewPager.getCurrentItem());
+            onPageChangeListener.onPageSelected(mViewPager.getCurrentItem());
+        }
     }
+
+    private class PageChangeListener extends ViewPager.SimpleOnPageChangeListener{
+        private static final int FIRST_PAGE=0;
+        public void onPageSelected(int position) {
+            if(position == mViewPagerAdapter.getCount()-1) setConfirmButton();
+            else setNextButton();
+        }
+    }
+
+    private void setNextButton() {
+        btnNext.setText(getString(R.string.CreateTableActivity_next));
+    }
+
+    private void setConfirmButton() {
+        btnNext.setText(getString(R.string.CreateTableActivity_confirm));
+    }
+
 }

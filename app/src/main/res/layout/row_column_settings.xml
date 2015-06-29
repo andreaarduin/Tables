@@ -7,6 +7,7 @@
     android:padding="@dimen/medium_padding"
     android:background="@drawable/card_selector"
     android:layout_margin="@dimen/smaller_padding"
+    android:id="@+id/root"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <EditText
